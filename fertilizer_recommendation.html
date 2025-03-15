@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Recommendation | AgriSmart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-light: #e8f5e9;
+            --primary-dark: #2E7D32;
+            --secondary-color: #009688;
+            --secondary-light: #e0f2f1;
+            --text-color: #2c3e50;
+            --background-color: #f5f7f5;
+            --card-background: white;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        /* Reset and Base Styles for Navbar */
+        header {
+            background-color: #2c7a2a;
+            padding: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            z-index: 200;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a.active {
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #f8b500;
+            border-radius: 3px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            color: white;
+            border: 1px solid white;
+            background: transparent;
+        }
+
+        .btn-signup {
+            background-color: #f8b500;
+            color: #333;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-button {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .mobile-menu-button span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #2c7a2a;
+            z-index: 999;
+            padding: 6rem 2rem 2rem;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+            display: flex;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-nav-links a.active {
+            font-weight: 600;
+            color: #f8b500;
+        }
+
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .mobile-auth-buttons .btn {
+            text-align: center;
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 768px) {
+
+            .nav-links,
+            .auth-buttons {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            /* Menu Button Animation */
+            .mobile-menu-button.active span:nth-child(1) {
+                transform: translateY(10px) rotate(45deg);
+            }
+
+            .mobile-menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .mobile-menu-button.active span:nth-child(3) {
+                transform: translateY(-10px) rotate(-45deg);
+            }
+        }
+
+        /* Dashboard Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+        }
+
+        .farm-icon {
+            margin-right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-dark);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .search-container {
+            display: flex;
+            margin-bottom: 25px;
+        }
+
+        .search-container input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px 0 0 6px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-container input:focus {
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .search-container button {
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-container button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .parameters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .parameter-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .parameter-input label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .parameter-input input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .parameter-input input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon input {
+            padding-right: 35px;
+        }
+
+        .input-with-icon .unit {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 14px;
+        }
+
+        .parameter-input .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .action-button {
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .action-button:hover {
+            background-color: #00796b;
+            transform: translateY(-2px);
+        }
+
+        .action-button.reset {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .action-button.reset:hover {
+            background-color: #e0e0e0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            height: 100%;
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .recommendation-content {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 25px;
+            box-shadow: var(--box-shadow);
+            display: none;
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .recommendation-card {
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .recommendation-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .recommendation-card p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .error-message i {
+            color: #f44336;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 5px;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 12px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .crop-selection {
+            margin-bottom: 20px;
+        }
+
+        .crop-selection select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .crop-selection select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .recommendations-list {
+            list-style-type: none;
+        }
+
+        .recommendations-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+        }
+
+        .recommendations-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .application-instructions {
+            background-color: var(--secondary-light);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .application-instructions h4 {
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .tips-card {
+            background-color: #fff8e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .tips-card h4 {
+            margin-bottom: 10px;
+            color: #ff8f00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feedback-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .feedback-button {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-button.helpful {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-color);
+        }
+
+        .feedback-button.helpful:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .feedback-button.not-helpful {
+            background-color: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .feedback-button.not-helpful:hover {
+            background-color: #e0e0e0;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">🌱 AgroCare</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="weather_forecast.html">Crop Advisor</a>
+                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-login">Login</a>
+                <a href="signup.html" class="btn btn-signup">Sign Up</a>
+            </div>
+            <div class="mobile-menu-button">
+                <span class="bar bar-1"></span>
+                <span class="bar bar-2"></span>
+                <span class="bar bar-3"></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Add Mobile Menu -->
+    <div class="mobile-menu">
+        <div class="close-button">✕</div>
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="weather_forecast.html">Crop Advisor</a>
+                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+        </div>
+        <div class="mobile-auth-buttons">
+            <a href="login.html" class="btn btn-login">Login</a>
+            <a href="signup.html" class="btn btn-signup">Sign Up</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard">
+            <div class="header">
+                <div class="farm-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <div>
+                    <h1>Fertilizer Recommendation</h1>
+                    <p>Get personalized fertilizer recommendations based on your soil parameters and local weather data
+                    </p>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="cityInput" placeholder="Enter your location for weather data">
+                <button id="searchButton"><i class="fas fa-search"></i> Search</button>
+            </div>
+
+            <div id="initialStateNotice" class="recommendation-card">
+                <h3><i class="fas fa-info-circle"></i> Getting Started</h3>
+                <p>Enter your location above to fetch current weather data. Then input your soil parameters to receive
+                    personalized fertilizer recommendations.</p>
+            </div>
+
+            <div id="soilParametersSection" class="section">
+                <div class="section-title">
+                    <i class="fas fa-layer-group"></i>
+                    <h2>Soil Parameters</h2>
+                </div>
+
+                <div class="crop-selection">
+                    <label for="cropType"><strong>Select Crop Type:</strong></label>
+                    <select id="cropType">
+                        <option value="rice">Rice</option>
+                        <option value="wheat">Wheat</option>
+                        <option value="maize">Maize</option>
+                        <option value="cotton">Cotton</option>
+                        <option value="sugarcane">Sugarcane</option>
+                        <option value="tomato">Tomato</option>
+                        <option value="potato">Potato</option>
+                        <option value="soybean">Soybean</option>
+                    </select>
+                </div>
+
+                <p>Enter your soil parameters for tailored fertilizer recommendations:</p>
+
+                <div class="parameters-grid">
+                    <div class="parameter-input">
+                        <label for="nitrogen">
+                            Nitrogen (N)
+                            <div class="tooltip"><i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Important for leaf growth and overall plant development</span>
+                            </div>
+                        </label>
+                        <div class="input-with-icon">
+                            <input type="number" id="nitrogen" placeholder="e.g., 90" min="0" max="200">
+                            <span class="unit">mg/kg</span>
+                        </div>
+                        <div class="helper-text">Normal range: 40-100 mg/kg</div>
+                    </div>
+
+                    <div class="parameter-input">
+                        <label for="phosphorus">
+                            Phosphorus (P)
+                            <div class="tooltip"><i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Essential for root development and flowering</span>
+                            </div>
+                        </label>
+                        <div class="input-with-icon">
+                            <input type="number" id="phosphorus" placeholder="e.g., 40" min="0" max="200">
+                            <span class="unit">mg/kg</span>
+                        </div>
+                        <div class="helper-text">Normal range: 20-80 mg/kg</div>
+                    </div>
+
+                    <div class="parameter-input">
+                        <label for="potassium">
+                            Potassium (K)
+                            <div class="tooltip"><i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Helps with water regulation and disease resistance</span>
+                            </div>
+                        </label>
+                        <div class="input-with-icon">
+                            <input type="number" id="potassium" placeholder="e.g., 80" min="0" max="200">
+                            <span class="unit">mg/kg</span>
+                        </div>
+                        <div class="helper-text">Normal range: 40-150 mg/kg</div>
+                    </div>
+
+                    <div class="parameter-input">
+                        <label for="ph">
+                            Soil pH
+                            <div class="tooltip"><i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Affects nutrient availability to plants</span>
+                            </div>
+                        </label>
+                        <input type="number" id="ph" placeholder="e.g., 6.5" min="0" max="14" step="0.1">
+                        <div class="helper-text">Most crops prefer 6.0-7.5</div>
+                    </div>
+
+                    <div class="parameter-input">
+                        <label for="rainfall">
+                            Annual Rainfall
+                            <div class="tooltip"><i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Total precipitation affecting soil moisture</span>
+                            </div>
+                        </label>
+                        <div class="input-with-icon">
+                            <input type="number" id="rainfall" placeholder="e.g., 1000" min="0" max="5000">
+                            <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="parameter-input">
+                        <label for="humidity">
+                            Humidity
+                            <div class="tooltip"><i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Atmospheric moisture affecting plant growth</span>
+                            </div>
+                        </label>
+                        <div class="input-with-icon">
+                            <input type="number" id="humidity" placeholder="e.g., 65" min="0" max="100">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="recommendButton" class="action-button">
+                        <i class="fas fa-flask"></i> Get Fertilizer Recommendation
+                    </button>
+                    <button id="resetButton" class="action-button reset">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                </div>
+            </div>
+
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>Analyzing soil parameters and generating recommendations...</p>
+            </div>
+
+            <div class="charts-section hidden" id="chartsSection">
+                <div class="chart-container">
+                    <div class="chart-title">Soil Nutrient Analysis</div>
+                    <canvas id="soilNutrientChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Weather Forecast</div>
+                    <canvas id="weatherChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recommendation-content" id="fertilizerRecommendation">
+                <div class="recommendation-header">
+                    <i class="fas fa-leaf fa-2x" style="color: var(--primary-color);"></i>
+                    <h2>Your Personalized Fertilizer Recommendations</h2>
+                </div>
+                <div id="geminiRecommendation"></div>
+
+                <div class="feedback-section">
+                    <p>Was this recommendation helpful?</p>
+                    <div class="feedback-buttons">
+                        <button class="feedback-button helpful">
+                            <i class="fas fa-thumbs-up"></i> Yes, it was helpful
+                        </button>
+                        <button class="feedback-button not-helpful">
+                            <i class="fas fa-thumbs-down"></i> No, needs improvement
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>&copy; 2025 AgriSmart. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Keys (Replace with your own keys)
+        const WEATHER_API_KEY = 'ffe12e2b0b0ea3b9d88917b6f684c69b'; // Your OpenWeather API key
+        const GEMINI_API_KEY = 'AIzaSyCLBeMVgOrN7lR8weOm2P5-Bit4F3HuOEo'; // Your Gemini API key
+
+        // DOM Elements
+        const searchButton = document.getElementById('searchButton');
+        const cityInput = document.getElementById('cityInput');
+        const initialStateNotice = document.getElementById('initialStateNotice');
+        const soilParametersSection = document.getElementById('soilParametersSection');
+        const recommendButton = document.getElementById('recommendButton');
+        const resetButton = document.getElementById('resetButton');
+        const fertilizerRecommendation = document.getElementById('fertilizerRecommendation');
+        const geminiRecommendation = document.getElementById('geminiRecommendation');
+        const chartsSection = document.getElementById('chartsSection');
+        const loading = document.getElementById('loading');
+
+        // Weather data storage
+        let weatherData = null;
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', initializePage);
+        searchButton.addEventListener('click', fetchWeatherData);
+        recommendButton.addEventListener('click', getFertilizerRecommendation);
+        resetButton.addEventListener('click', resetForm);
+
+        // Initialize page
+        function initializePage() {
+            // Hide soil parameters initially
+            soilParametersSection.classList.add('hidden');
+
+            // Set default values for testing
+            document.getElementById('nitrogen').value = '';
+            document.getElementById('phosphorus').value = '';
+            document.getElementById('potassium').value = '';
+            document.getElementById('ph').value = '';
+            document.getElementById('rainfall').value = '';
+            document.getElementById('humidity').value = '';
+
+            // Add feedback button listeners
+            document.querySelectorAll('.feedback-button').forEach(button => {
+                button.addEventListener('click', function () {
+                    alert('Thank you for your feedback! We use this to improve our recommendations.');
+                    document.querySelectorAll('.feedback-button').forEach(btn => {
+                        btn.disabled = true;
+                        btn.style.opacity = 0.6;
+                    });
+                });
+            });
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('nitrogen').value = '';
+            document.getElementById('phosphorus').value = '';
+            document.getElementById('potassium').value = '';
+            document.getElementById('ph').value = '';
+            document.getElementById('rainfall').value = '';
+            document.getElementById('humidity').value = '';
+            document.getElementById('cropType').selectedIndex = 0;
+
+            // Hide results
+            fertilizerRecommendation.style.display = 'none';
+            chartsSection.classList.add('hidden');
+
+            // Scroll to top of form
+            soilParametersSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Modified fetchWeatherData - don't show charts yet
+        async function fetchWeatherData() {
+            const city = cityInput.value.trim();
+            if (!city) {
+                showError('Please enter a valid location');
+                return;
+            }
+
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${WEATHER_API_KEY}&units=metric`);
+                if (!response.ok) throw new Error('City not found or API error');
+
+                weatherData = await response.json();
+
+                // Update UI
+                initialStateNotice.classList.add('hidden');
+                soilParametersSection.classList.remove('hidden');
+
+                // Pre-fill humidity from weather data
+                if (weatherData.list && weatherData.list[0] && weatherData.list[0].main && weatherData.list[0].main.humidity) {
+                    document.getElementById('humidity').value = weatherData.list[0].main.humidity;
+                }
+
+                // Pre-fill rainfall - this is approximate from 5-day forecast
+                if (weatherData.list) {
+                    // Calculate average rainfall from forecast (convert to annual estimate)
+                    let totalRain = 0;
+                    let rainCount = 0;
+
+                    weatherData.list.forEach(entry => {
+                        if (entry.rain && entry.rain['3h']) {
+                            totalRain += entry.rain['3h'];
+                            rainCount++;
+                        }
+                    });
+
+                    if (rainCount > 0) {
+                        // Extrapolate to annual rainfall (very rough estimate)
+                        const annualRainfall = Math.round((totalRain / rainCount) * 8 * 365);
+                        document.getElementById('rainfall').value = annualRainfall;
+                    }
+                }
+
+                // Display Weather Chart but don't show the section yet
+                displayWeatherChart(weatherData);
+
+                // Scroll to parameters section
+                soilParametersSection.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                showError(`Error: ${error.message || 'Could not fetch weather data'}`);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-circle"></i>
+                <div>${message}</div>
+            `;
+
+            // Remove any existing error messages
+            document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+            // Add to page before the parameters section
+            initialStateNotice.parentNode.insertBefore(errorDiv, initialStateNotice.nextSibling);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.opacity = '0';
+                setTimeout(() => errorDiv.remove(), 500);
+            }, 5000);
+        }
+
+        // Display charts only after both weather data and soil nutrient data are available
+        function displayWeatherChart(weatherData) {
+            const ctx = document.getElementById('weatherChart').getContext('2d');
+
+            // Get the next 5 days of data (sampling at noon)
+            const dates = [];
+            const temperatures = [];
+            const humidity = [];
+
+            // Get every 8th item (3 hour intervals, so 8 = 24 hours)
+            for (let i = 0; i < Math.min(weatherData.list.length, 40); i += 8) {
+                const entry = weatherData.list[i];
+                const date = new Date(entry.dt * 1000);
+                dates.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                temperatures.push(entry.main.temp);
+                humidity.push(entry.main.humidity);
+            }
+
+            // Destroy existing chart if it exists
+            if (window.weatherChart instanceof Chart) {
+                window.weatherChart.destroy();
+            }
+
+            window.weatherChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Temperature (°C)',
+                            data: temperatures,
+                            borderColor: '#FF7043',
+                            backgroundColor: 'rgba(255, 112, 67, 0.2)',
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Humidity (%)',
+                            data: humidity,
+                            borderColor: '#2196F3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Temperature (°C)' },
+                            grid: { borderDash: [2] }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Humidity (%)' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        title: { display: false },
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                    }
+                }
+            });
+
+            // Don't show charts section yet - wait for both charts to be ready
+        }
+
+        // Display Soil Nutrient Chart
+        function displaySoilNutrientChart() {
+            const ctx = document.getElementById('soilNutrientChart').getContext('2d');
+            const nitrogen = parseFloat(document.getElementById('nitrogen').value) || 0;
+            const phosphorus = parseFloat(document.getElementById('phosphorus').value) || 0;
+            const potassium = parseFloat(document.getElementById('potassium').value) || 0;
+
+            // Optimal ranges based on selected crop
+            const cropType = document.getElementById('cropType').value;
+            let optimalRanges = {
+                nitrogen: [40, 80],
+                phosphorus: [20, 60],
+                potassium: [40, 80]
+            };
+
+            // Adjust optimal ranges based on crop type
+            switch (cropType) {
+                case 'rice':
+                    optimalRanges = { nitrogen: [80, 120], phosphorus: [30, 50], potassium: [60, 100] };
+                    break;
+                case 'wheat':
+                    optimalRanges = { nitrogen: [60, 100], phosphorus: [30, 60], potassium: [40, 80] };
+                    break;
+                case 'maize':
+                    optimalRanges = { nitrogen: [80, 140], phosphorus: [30, 70], potassium: [50, 100] };
+                    break;
+                case 'tomato':
+                    optimalRanges = { nitrogen: [40, 80], phosphorus: [40, 80], potassium: [80, 120] };
+                    break;
+                case 'potato':
+                    optimalRanges = { nitrogen: [60, 100], phosphorus: [60, 100], potassium: [80, 140] };
+                    break;
+                // Default values for other crops are set above
+            }
+
+            // Destroy existing chart if it exists
+            if (window.soilChart instanceof Chart) {
+                window.soilChart.destroy();
+            }
+
+            window.soilChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
+                    datasets: [
+                        {
+                            label: 'Your Soil',
+                            data: [nitrogen, phosphorus, potassium],
+                            backgroundColor: ['#4CAF50', '#2196F3', '#FFC107'],
+                            borderColor: ['#2E7D32', '#1565C0', '#FFA000'],
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Optimal Low',
+                            data: [optimalRanges.nitrogen[0], optimalRanges.phosphorus[0], optimalRanges.potassium[0]],
+                            backgroundColor: 'rgba(0, 0, 0, 0)',
+                            borderColor: '#9e9e9e',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            type: 'line',
+                            pointStyle: 'dash'
+                        },
+                        {
+                            label: 'Optimal High',
+                            data: [optimalRanges.nitrogen[1], optimalRanges.phosphorus[1], optimalRanges.potassium[1]],
+                            backgroundColor: 'rgba(0, 0, 0, 0)',
+                            borderColor: '#9e9e9e',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            type: 'line',
+                            pointStyle: 'dash'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: false },
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'mg/kg' },
+                            grid: { borderDash: [2] }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Get Fertilizer Recommendation
+        async function getFertilizerRecommendation() {
+            const errors = validateSoilParameters();
+            if (errors.length > 0) {
+                showError(`Please fix the following issues:\n${errors.join(', ')}`);
+                return;
+            }
+
+            // Show Loading
+            loading.style.display = 'block';
+            fertilizerRecommendation.style.display = 'none';
+            chartsSection.classList.add('hidden'); // Hide charts until all data is ready
+
+            try {
+                const nitrogen = document.getElementById('nitrogen').value;
+                const phosphorus = document.getElementById('phosphorus').value;
+                const potassium = document.getElementById('potassium').value;
+                const ph = document.getElementById('ph').value;
+                const rainfall = document.getElementById('rainfall').value;
+                const humidity = document.getElementById('humidity').value;
+                const cropType = document.getElementById('cropType').value;
+
+                // Display Soil Nutrient Chart
+                displaySoilNutrientChart();
+
+                const prompt = `You are an agricultural expert. Based on the following soil parameters, weather conditions, and crop type, recommend the best fertilizer.
+
+        Crop Type: ${cropType}
+        
+        Soil Parameters:
+        - Nitrogen (N): ${nitrogen} mg/kg
+        - Phosphorus (P): ${phosphorus} mg/kg
+        - Potassium (K): ${potassium} mg/kg
+        - Soil pH: ${ph}
+        - Annual Rainfall: ${rainfall} mm
+        - Humidity: ${humidity}%
+        
+        Please provide:
+        1. Analysis of the soil nutrient levels (whether they are low, adequate, or high for the selected crop)
+        2. Top 3 specific fertilizer recommendations with NPK ratios and explanations why they're suitable
+        3. Detailed application instructions (timing, method, frequency)
+        4. Additional tips for soil management based on the pH level
+        
+        Format the response with clear headings and sections. Do not use asterisks or markdown formatting.`;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 1024
+                        }
+                    })
+                });
+
+                if (!response.ok) throw new Error('Gemini API error');
+                const data = await response.json();
+
+                // Check if we have a valid response
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                    throw new Error('Invalid response format from Gemini API');
+                }
+
+                const recommendationText = data.candidates[0].content.parts[0].text;
+
+                // Process the recommendation text - split into sections
+                const formattedText = processRecommendationText(recommendationText, cropType);
+
+                // Display Recommendations
+                geminiRecommendation.innerHTML = formattedText;
+                fertilizerRecommendation.style.display = 'block';
+
+                // Now that both charts are ready, show the charts section
+                chartsSection.classList.remove('hidden');
+
+                // Scroll to recommendations
+                fertilizerRecommendation.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error getting fertilizer recommendation:', error);
+                geminiRecommendation.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Error:</strong> ${error.message || 'Unable to generate recommendations'}
+                    <p>Please try again or check your internet connection.</p>
+                </div>
+            </div>
+        `;
+                fertilizerRecommendation.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+
+        // Improved recommendation text processing
+        function processRecommendationText(text, cropType) {
+            // Replace any markdown-style asterisks with proper HTML formatting
+            text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Start with the first card
+            let html = `<div class="recommendation-card">
+        <h3><i class="fas fa-seedling"></i> ${cropType.charAt(0).toUpperCase() + cropType.slice(1)} Soil Analysis</h3>`;
+
+            // Split by main sections using a more robust approach
+            const sections = text.split(/\n\s*\n/);
+
+            let currentSection = 'analysis'; // Start with analysis section
+
+            sections.forEach(section => {
+                // Clean up the section text
+                const cleanSection = section.trim();
+                if (!cleanSection) return;
+
+                // Check for section headers and update HTML accordingly
+                if (cleanSection.toLowerCase().includes('fertilizer recommendation') ||
+                    cleanSection.toLowerCase().includes('recommended fertilizer')) {
+
+                    // Close previous section
+                    html += `</div>`;
+
+                    // Open fertilizer section
+                    html += `<div class="recommendation-card">
+                <h3><i class="fas fa-flask"></i> Fertilizer Recommendations</h3>`;
+                    currentSection = 'fertilizer';
+
+                    // Extract recommendations
+                    const recommendations = cleanSection.split(/\d+\.\s/).filter(item => item.trim().length > 0);
+
+                    if (recommendations.length > 1) { // If we have numbered recommendations
+                        html += `<ul class="recommendations-list">`;
+                        recommendations.forEach(rec => {
+                            if (!rec.toLowerCase().includes('fertilizer recommendation') &&
+                                !rec.toLowerCase().includes('recommended fertilizer')) {
+                                html += `<li>${rec.trim()}</li>`;
+                            }
+                        });
+                        html += `</ul>`;
+                    } else {
+                        // If no numbering found, just add the text
+                        html += `<p>${cleanSection.replace(/fertilizer recommendations:?/i, '').trim()}</p>`;
+                    }
+                }
+                else if (cleanSection.toLowerCase().includes('application instruction') ||
+                    cleanSection.toLowerCase().includes('how to apply')) {
+
+                    // Close previous section
+                    html += `</div>`;
+
+                    // Open application section
+                    html += `<div class="application-instructions">
+                <h4><i class="fas fa-calendar-alt"></i> Application Instructions</h4>
+                <p>${cleanSection.replace(/application instructions:?/i, '').trim()}</p>`;
+                    currentSection = 'application';
+                }
+                else if (cleanSection.toLowerCase().includes('soil management') ||
+                    cleanSection.toLowerCase().includes('additional tips')) {
+
+                    // Close previous section
+                    html += `</div>`;
+
+                    // Open tips section
+                    html += `<div class="tips-card">
+                <h4><i class="fas fa-lightbulb"></i> Tips for Soil Management</h4>
+                <p>${cleanSection.replace(/additional tips:?|soil management tips:?/i, '').trim()}</p>`;
+                    currentSection = 'tips';
+                }
+                else {
+                    // Add to existing section
+                    html += `<p>${cleanSection}</p>`;
+                }
+            });
+
+            // Make sure to close the final section
+            html += `</div>`;
+
+            return html;
+        }
+
+
+        // Validate Soil Parameters
+        function validateSoilParameters() {
+            const errors = [];
+            const fields = [
+                { id: 'nitrogen', name: 'Nitrogen', min: 0, max: 200 },
+                { id: 'phosphorus', name: 'Phosphorus', min: 0, max: 200 },
+                { id: 'potassium', name: 'Potassium', min: 0, max: 200 },
+                { id: 'ph', name: 'pH', min: 0, max: 14 },
+                { id: 'rainfall', name: 'Rainfall', min: 0, max: 5000 },
+                { id: 'humidity', name: 'Humidity', min: 0, max: 100 }
+            ];
+
+            fields.forEach(field => {
+                const value = document.getElementById(field.id).value;
+                if (!value) errors.push(`${field.name} is required`);
+                else if (isNaN(value)) errors.push(`${field.name} must be a number`);
+                else if (value < field.min || value > field.max) errors.push(`${field.name} must be between ${field.min} and ${field.max}`);
+            });
+
+            return errors;
+        }
+
+        // Add this at the beginning of your existing script
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const closeButton = document.querySelector('.close-button');
+
+            // Toggle mobile menu with hamburger button
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenuButton.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+
+                // Prevent scrolling when menu is open
+                if (mobileMenu.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Close menu with X button
+            closeButton.addEventListener('click', function () {
+                mobileMenuButton.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            // Close menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-nav-links a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    mobileMenuButton.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            // Set active class based on current page
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+
+            function setActiveLink(links) {
+                links.forEach(link => {
+                    const linkPage = link.getAttribute('href');
+                    if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            setActiveLink(navLinks);
+            setActiveLink(mobileNavLinks);
+        });
+    </script>
+</body>
+
+</html>

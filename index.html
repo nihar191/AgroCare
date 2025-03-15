@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroCare - Crop Management & Advisory Platform</title>
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Close Button styles */
+    .close-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      z-index: 201;
+    }
+
+    .close-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
+    }
+
+    /* Header Styles */
+    header {
+      background-color: #2c7a2a;
+      padding: 1rem;
+      position: fixed;
+      width: 100%;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-decoration: none;
+      z-index: 200;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.8;
+    }
+
+    .nav-links a.active {
+      font-weight: 600;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #f8b500;
+      border-radius: 3px;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-login {
+      color: white;
+      border: 1px solid white;
+      background: transparent;
+    }
+
+    .btn-signup {
+      background-color: #f8b500;
+      color: #333;
+      border: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Mobile Menu Button */
+    .mobile-menu-button {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 24px;
+      cursor: pointer;
+      z-index: 200;
+    }
+
+    .mobile-menu-button span {
+      display: block;
+      width: 100%;
+      height: 3px;
+      background-color: white;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    /* Adjust mobile menu to accommodate the close button */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: #2c7a2a;
+      z-index: 100;
+      padding: 6rem 2rem 2rem;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+
+    .mobile-menu.active {
+      transform: translateX(0);
+      display: flex;
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .mobile-nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.2rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .mobile-nav-links a.active {
+      font-weight: 600;
+      color: #f8b500;
+    }
+
+    .mobile-auth-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .mobile-auth-buttons .btn {
+      text-align: center;
+    }
+
+    /* Hero Section */
+    .hero {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/api/placeholder/1200/600');
+      background-size: cover;
+      background-position: center;
+      height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      padding: 0 1rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .btn-large {
+      padding: 0.75rem 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .btn-primary {
+      background-color: #2c7a2a;
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary {
+      background-color: white;
+      color: #2c7a2a;
+      border: none;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 4rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 2rem;
+      color: #2c7a2a;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title p {
+      color: #666;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .feature-img {
+      height: 200px;
+      background-color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #2c7a2a;
+    }
+
+    .feature-content {
+      padding: 1.5rem;
+    }
+
+    .feature-content h3 {
+      color: #2c7a2a;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Subscription Plans */
+    .subscription {
+      background-color: #eef7ee;
+      padding: 4rem 1rem;
+    }
+
+    .subscription-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .plan-card {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .plan-card:hover {
+      transform: scale(1.03);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: #f8b500;
+      color: white;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      font-size: 0.8rem;
+      border-bottom-left-radius: 10px;
+    }
+
+    .plan-header {
+      padding: 2rem;
+      background-color: #f5f7fa;
+    }
+
+    .plan-header h3 {
+      color: #2c7a2a;
+      margin-bottom: 0.5rem;
+    }
+
+    .plan-price {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .plan-price span {
+      font-size: 1rem;
+      color: #666;
+    }
+
+    .plan-features {
+      padding: 2rem;
+    }
+
+    .plan-features ul {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .plan-features li {
+      margin-bottom: 0.5rem;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      color: #2c7a2a;
+      position: absolute;
+      left: 0;
+    }
+
+    .btn-plan {
+      width: 80%;
+      display: inline-block;
+      padding: 0.75rem 0;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      padding: 4rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .testimonial-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .testimonial-text {
+      margin-bottom: 1.5rem;
+      font-style: italic;
+      color: #666;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #eee;
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #2c7a2a;
+    }
+
+    /* Call to Action */
+    .cta {
+      background-color: #2c7a2a;
+      color: white;
+      padding: 4rem 1rem;
+      text-align: center;
+    }
+
+    .cta-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      margin-bottom: 2rem;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1a3d19;
+      color: white;
+      padding: 3rem 1rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-col h4 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-col a {
+      color: #ccc;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid #3a5e39;
+      color: #999;
+    }
+
+    /* Chatbot Button */
+    .chatbot-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #f8b500;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .chatbot-button:hover {
+      transform: scale(1.1);
+    }
+
+    .feature-link {
+      text-decoration: none;
+      /* Remove underline */
+      color: inherit;
+      /* Inherit text color from parent */
+      display: block;
+      /* Make the link cover the entire card */
+      height: 100%;
+      /* Ensure the link covers the full height */
+    }
+
+    .feature-link h3 {
+      color: #2c7a2a;
+      /* Ensure the heading color matches your design */
+    }
+
+    .feature-link:hover {
+      text-decoration: none;
+      /* Ensure underline doesn't reappear on hover */
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+      .nav-links,
+      .auth-buttons {
+        display: none;
+      }
+
+      .mobile-menu-button {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: flex;
+      }
+
+      /* Menu Button Animation */
+      .mobile-menu-button.active span:nth-child(1) {
+        transform: translateY(10px) rotate(45deg);
+      }
+
+      .mobile-menu-button.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .mobile-menu-button.active span:nth-child(3) {
+        transform: translateY(-10px) rotate(-45deg);
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hero-buttons .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <nav class="navbar">
+      <a href="index.html" class="logo">🌱 AgroCare</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="weather_forecast.html">Crop Advisor</a>
+        <a href="crop_disease_detection.html">Disease Detection</a>
+        <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn btn-login">Login</a>
+        <a href="signup.html" class="btn btn-signup">Sign Up</a>
+      </div>
+      <div class="mobile-menu-button">
+        <span class="bar bar-1"></span>
+        <span class="bar bar-2"></span>
+        <span class="bar bar-3"></span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Mobile Menu (Add this right after the header) -->
+  <div class="mobile-menu">
+    <div class="close-button">✕</div>
+    <div class="mobile-nav-links">
+      <a href="index.html">Home</a>
+      <a href="weather_forecast.html">Crop Advisor</a>
+      <a href="crop_disease_detection.html">Disease Detection</a>
+      <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="mobile-auth-buttons">
+      <a href="login.html" class="btn btn-login">Login</a>
+      <a href="signup.html" class="btn btn-signup">Sign Up</a>
+    </div>
+  </div>
+
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Smart Farming Solutions for Better Crop Management</h1>
+      <p>Get personalized crop recommendations, disease detection, and fertilizer advice to maximize your harvest yield.
+      </p>
+      <div class="hero-buttons">
+        <a href="#" class="btn btn-large btn-primary">Get Started</a>
+        <a href="#" class="btn btn-large btn-secondary">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="section-title">
+      <h2>Our Smart Agriculture Services</h2>
+      <p>Advanced tools and technologies to help you make informed farming decisions</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <a href="weather_forecast.html" class="feature-link">
+          <div class="feature-img">🌾</div>
+          <div class="feature-content">
+            <h3>Crop Recommendation</h3>
+            <p>Get personalized crop suggestions based on your soil type, climate conditions, and location to maximize
+              yield
+              and profit.</p>
+          </div>
+        </a>
+      </div>
+      <div class="feature-card">
+        <a href="crop_disease_detection.html" class="feature-link">
+          <div class="feature-img">🔬</div>
+          <div class="feature-content">
+            <h3>Disease Detection</h3>
+            <p>Upload images of your plants and get instant identification of diseases, pests, and deficiencies with
+              treatment recommendations.</p>
+          </div>
+        </a>
+      </div>
+      <div class="feature-card">
+        <a href="fertilizer_recommendation.html" class="feature-link">
+          <div class="feature-img">🧪</div>
+          <div class="feature-content">
+            <h3>Fertilizer Recommendation</h3>
+            <p>Receive custom fertilizer recommendations based on soil nutrient levels and crop requirements for optimal
+              growth.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subscription Plans -->
+  <section class="subscription">
+    <div class="subscription-content">
+      <div class="section-title">
+        <h2>Subscription Plans</h2>
+        <p>Choose the perfect plan for your farming needs</p>
+      </div>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="plan-header">
+            <h3>Basic</h3>
+            <div class="plan-price">$0<span>/month</span></div>
+            <p>Get started with essential features</p>
+          </div>
+          <div class="plan-features">
+            <ul>
+              <li>Limited crop recommendations</li>
+              <li>Basic disease detection (5/month)</li>
+              <li>Simple fertilizer advice</li>
+              <li>Community forum access</li>
+              <li>Email support</li>
+            </ul>
+            <a href="#" class="btn btn-primary btn-plan">Start Free</a>
+          </div>
+        </div>
+        <div class="plan-card">
+          <div class="popular-badge">Most Popular</div>
+          <div class="plan-header">
+            <h3>Pro</h3>
+            <div class="plan-price">$9.99<span>/month</span></div>
+            <p>Advanced features for serious farmers</p>
+          </div>
+          <div class="plan-features">
+            <ul>
+              <li>Unlimited crop recommendations</li>
+              <li>Advanced disease detection (50/month)</li>
+              <li>Detailed fertilizer analysis</li>
+              <li>Seasonal planning tools</li>
+              <li>Priority email & chat support</li>
+            </ul>
+            <a href="#" class="btn btn-primary btn-plan">Get Pro</a>
+          </div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-header">
+            <h3>Premium</h3>
+            <div class="plan-price">$24.99<span>/month</span></div>
+            <p>Complete solution for commercial farms</p>
+          </div>
+          <div class="plan-features">
+            <ul>
+              <li>All Pro features included</li>
+              <li>Unlimited disease detection</li>
+              <li>Multiple farm management</li>
+              <li>Advanced analytics dashboard</li>
+              <li>24/7 priority support</li>
+            </ul>
+            <a href="#" class="btn btn-primary btn-plan">Get Premium</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <div class="section-title">
+      <h2>What Our Farmers Say</h2>
+      <p>Success stories from farmers using our platform</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-text">
+          "The crop recommendation system helped me increase my yield by 30% last season. The soil analysis was spot on
+          and the fertilizer guidance was exactly what my crops needed."
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">JD</div>
+          <div>
+            <strong>John Davis</strong>
+            <p>Wheat Farmer, Kansas</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-text">
+          "I detected an early outbreak of leaf blight using the disease detection feature. The immediate treatment
+          advice saved my entire tomato crop. Worth every penny!"
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">MP</div>
+          <div>
+            <strong>Maria Perez</strong>
+            <p>Vegetable Grower, California</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-text">
+          "As a new farmer, this platform has been my go-to advisor. The chatbot answers my questions instantly, and the
+          recommendations are always reliable and easy to follow."
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">AK</div>
+          <div>
+            <strong>Amir Khan</strong>
+            <p>Small-scale Farmer, Illinois</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta">
+    <div class="cta-content">
+      <h2>Ready to Transform Your Farming?</h2>
+      <p>Join thousands of farmers already using AgroCare to increase their yields, reduce costs, and farm smarter.</p>
+      <a href="#" class="btn btn-large btn-secondary">Get Started Today</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>AgroCare</h4>
+        <p>Smart solutions for modern farming, providing data-driven recommendations for better agricultural decisions.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Crop Recommendation</a></li>
+          <li><a href="#">Disease Detection</a></li>
+          <li><a href="#">Fertilizer Recommendation</a></li>
+          <li><a href="#">Weather Forecasts</a></li>
+          <li><a href="#">Market Insights</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Team</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Partners</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Contact Support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 AgroCare. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Chatbot Button -->
+  <div class="chatbot-button">💬</div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const mobileMenuButton = document.querySelector('.mobile-menu-button');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      const closeButton = document.querySelector('.close-button');
+
+      // Toggle mobile menu with hamburger button
+      mobileMenuButton.addEventListener('click', function () {
+        mobileMenuButton.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+
+        // Prevent scrolling when menu is open
+        if (mobileMenu.classList.contains('active')) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
+      });
+
+      // Close menu with X button
+      closeButton.addEventListener('click', function () {
+        mobileMenuButton.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+
+      // Close menu when clicking on links
+      const mobileMenuLinks = document.querySelectorAll('.mobile-nav-links a');
+      mobileMenuLinks.forEach(link => {
+        link.addEventListener('click', function () {
+          mobileMenuButton.classList.remove('active');
+          mobileMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

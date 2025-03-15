@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer's Weather Forecast & Crop Advisor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        /* Reset and Base Styles for Navbar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Close Button styles */
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .close-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #2c7a2a;
+            padding: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            z-index: 200;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a.active {
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #f8b500;
+            border-radius: 3px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            color: white;
+            border: 1px solid white;
+            background: transparent;
+        }
+
+        .btn-signup {
+            background-color: #f8b500;
+            color: #333;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-button {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .mobile-menu-button span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #2c7a2a;
+            z-index: 999;
+            padding: 6rem 2rem 2rem;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+            display: flex;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-nav-links a.active {
+            font-weight: 600;
+            color: #f8b500;
+        }
+
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .mobile-auth-buttons .btn {
+            text-align: center;
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 768px) {
+
+            .nav-links,
+            .auth-buttons {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            /* Menu Button Animation */
+            .mobile-menu-button.active span:nth-child(1) {
+                transform: translateY(10px) rotate(45deg);
+            }
+
+            .mobile-menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .mobile-menu-button.active span:nth-child(3) {
+                transform: translateY(-10px) rotate(-45deg);
+            }
+        }
+
+        /* ===== General Styles ===== */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-light: #e8f5e9;
+            --primary-dark: #2E7D32;
+            --secondary-color: #009688;
+            --secondary-light: #e0f2f1;
+            --text-color: #2c3e50;
+            --background-color: #f0f4f0;
+            --card-background: white;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-top: 80px;
+            /* This is already correct */
+        }
+
+        /* ===== Dashboard Styles ===== */
+        .dashboard {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+        }
+
+        .farm-icon {
+            margin-right: 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .search-container {
+            display: flex;
+            margin-bottom: 25px;
+        }
+
+        .search-container input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px 0 0 6px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-container input:focus {
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .search-container button {
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .search-container button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .weather-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .weather-card {
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            width: 18%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-card .day {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .weather-card .weather-icon {
+            font-size: 2.5em;
+            margin: 10px 0;
+        }
+
+        .weather-card .temp {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+            display: none;
+            /* Hide initially */
+        }
+
+        .section {
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 25px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title h2 {
+            margin-bottom: 0;
+        }
+
+        .section-content {
+            margin-top: 15px;
+        }
+
+        .parameters-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .parameter-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .parameter-input label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .parameter-input input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .parameter-input input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .action-button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .action-button:hover {
+            background-color: #00796b;
+        }
+
+        .action-button:active {
+            transform: translateY(1px);
+        }
+
+        .advanced-recommendation {
+            background-color: var(--secondary-light);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 25px;
+            border-left: 5px solid var(--secondary-color);
+            box-shadow: var(--box-shadow);
+            display: none;
+            /* Hide initially */
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .recommendation-content {
+            line-height: 1.7;
+        }
+
+        .recommendation-content h1 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 10px;
+        }
+
+        .recommendation-content h2 {
+            color: var(--secondary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .recommendation-content h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+            font-size: 1.3em;
+        }
+
+        .recommendation-content ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-content li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .recommendation-content li::before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 15px;
+            margin-left: -15px;
+            position: absolute;
+        }
+
+        .recommendation-content p {
+            margin-bottom: 15px;
+        }
+
+        .recommendation-content strong {
+            color: var(--primary-dark);
+        }
+
+        .crop-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+
+        .initial-state {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .weather-card {
+                width: 48%;
+            }
+
+            .parameters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .weather-card {
+                width: 100%;
+            }
+
+            .parameters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .farm-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">🌱 AgroCare</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="weather_forecast.html">Crop Advisor</a>
+                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-login">Login</a>
+                <a href="signup.html" class="btn btn-signup">Sign Up</a>
+            </div>
+            <div class="mobile-menu-button">
+                <span class="bar bar-1"></span>
+                <span class="bar bar-2"></span>
+                <span class="bar bar-3"></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <div class="close-button">✕</div>
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="weather_forecast.html">Crop Advisor</a>
+            <a href="crop_disease_detection.html">Disease Detection</a>
+            <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="mobile-auth-buttons">
+            <a href="login.html" class="btn btn-login">Login</a>
+            <a href="signup.html" class="btn btn-signup">Sign Up</a>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="header">
+            <img src="/static/images/Crop Advisor.png" alt="Farm Icon" class="farm-icon" width="90">
+            <h1>Farmer's Weather Forecast & Crop Advisor</h1>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="cityInput" placeholder="Enter your location">
+            <button id="searchButton">Search</button>
+        </div>
+
+        <div id="initialStateNotice" class="initial-state">
+            <p>Enter your location above and click 'Search' to get weather data and crop recommendations.</p>
+        </div>
+
+        <div id="weatherSummary" class="weather-summary hidden">
+            <!-- Daily forecast will be populated here -->
+        </div>
+
+        <div id="chartContainer" class="chart-container">
+            <canvas id="temperatureChart"></canvas>
+        </div>
+
+        <div id="basicRecommendationSection" class="section hidden">
+            <div class="section-title">
+                <h2>Basic Crop Recommendation</h2>
+            </div>
+            <div class="section-content" id="cropRecommendation">
+                <p id="cropText"></p>
+            </div>
+        </div>
+
+        <div id="soilParametersSection" class="section hidden">
+            <div class="section-title">
+                <h2>Soil Parameters</h2>
+            </div>
+            <p>Enter your soil parameters for advanced crop recommendations:</p>
+
+            <div class="parameters-grid">
+                <div class="parameter-input">
+                    <label for="nitrogen">Nitrogen (N) (mg/kg)</label>
+                    <input type="number" id="nitrogen" placeholder="e.g., 90" min="0" max="200">
+                </div>
+                <div class="parameter-input">
+                    <label for="phosphorus">Phosphorus (P) (mg/kg)</label>
+                    <input type="number" id="phosphorus" placeholder="e.g., 40" min="0" max="200">
+                </div>
+                <div class="parameter-input">
+                    <label for="potassium">Potassium (K) (mg/kg)</label>
+                    <input type="number" id="potassium" placeholder="e.g., 80" min="0" max="200">
+                </div>
+                <div class="parameter-input">
+                    <label for="ph">Soil pH</label>
+                    <input type="number" id="ph" placeholder="e.g., 6.5" min="0" max="14" step="0.1">
+                </div>
+                <div class="parameter-input">
+                    <label for="rainfall">Annual Rainfall (mm)</label>
+                    <input type="number" id="rainfall" placeholder="e.g., 1000" min="0" max="5000">
+                </div>
+                <div class="parameter-input">
+                    <label for="humidity">Humidity (%)</label>
+                    <input type="number" id="humidity" placeholder="e.g., 65" min="0" max="100">
+                </div>
+            </div>
+
+            <button id="advancedButton" class="action-button">Get Advanced Recommendation</button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Analyzing data and generating recommendations...</p>
+        </div>
+
+        <div class="advanced-recommendation" id="advancedRecommendation">
+            <h2>Advanced Crop Analysis</h2>
+            <div id="geminiRecommendation" class="recommendation-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // ======== API KEYS - REPLACE THESE ========
+        const WEATHER_API_KEY = 'ffe12e2b0b0ea3b9d88917b6f684c69b'; // Your OpenWeather API key
+        const GEMINI_API_KEY = 'AIzaSyCLBeMVgOrN7lR8weOm2P5-Bit4F3HuOEo'; // Your Gemini API key
+        // ==========================================
+
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
+        let temperatureChart = null;
+        let currentWeatherData = null;
+        let weatherDataFetched = false;
+
+        // Weather icons and emojis
+        const weatherIcons = {
+            'Clear': '☀️',
+            'Clouds': '☁️',
+            'Rain': '🌧️',
+            'Drizzle': '🌦️',
+            'Thunderstorm': '⛈️',
+            'Snow': '❄️',
+            'Mist': '🌫️'
+        };
+
+        // Basic crop recommendations based on temperature and weather
+        const cropRecommendations = {
+            'Clear': {
+                'tropical': 'Ideal for tropical crops like banana, mango, and papaya.',
+                'temperate': 'Great conditions for tomatoes, peppers, and corn.',
+                'cool': 'Perfect for leafy greens and root vegetables.'
+            },
+            'Clouds': {
+                'tropical': 'Good for rice, sugarcane, and coconut cultivation.',
+                'temperate': 'Suitable for beans, squash, and pumpkins.',
+                'cool': 'Optimal for cabbage, broccoli, and carrots.'
+            },
+            'Rain': {
+                'tropical': 'Excellent for paddy fields and water-loving crops.',
+                'temperate': 'Good for cucumber, melons, and gourds.',
+                'cool': 'Watch for waterlogging with root crops.'
+            },
+            'Drizzle': {
+                'tropical': 'Good for tropical fruits that need moisture.',
+                'temperate': 'Suitable for most garden vegetables.',
+                'cool': 'Good for leafy greens and brassicas.'
+            },
+            'Thunderstorm': {
+                'tropical': 'Consider protection for delicate crops.',
+                'temperate': 'Check for drainage to prevent waterlogging.',
+                'cool': 'Monitor soil moisture levels closely.'
+            },
+            'Snow': {
+                'tropical': 'Not suitable for outdoor tropical crops.',
+                'temperate': 'Consider greenhouse cultivation only.',
+                'cool': 'Some root vegetables and winter greens may tolerate these conditions.'
+            },
+            'Mist': {
+                'tropical': 'Good for crops that like humidity.',
+                'temperate': 'Watch for fungal diseases in these conditions.',
+                'cool': 'Suitable for many cool-weather crops.'
+            }
+        };
+
+        // DOM elements
+        const searchButton = document.getElementById('searchButton');
+        const cityInput = document.getElementById('cityInput');
+        const initialStateNotice = document.getElementById('initialStateNotice');
+        const weatherSummary = document.getElementById('weatherSummary');
+        const chartContainer = document.getElementById('chartContainer');
+        const basicRecommendationSection = document.getElementById('basicRecommendationSection');
+        const soilParametersSection = document.getElementById('soilParametersSection');
+        const advancedButton = document.getElementById('advancedButton');
+
+        // Add event listeners
+        searchButton.addEventListener('click', fetchWeatherData);
+        cityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                fetchWeatherData();
+            }
+        });
+        advancedButton.addEventListener('click', getAdvancedRecommendation);
+
+        // Validation functions
+        function validateCity(city) {
+            return city.trim() !== '';
+        }
+
+        function validateSoilParameters() {
+            const fields = [
+                { element: document.getElementById('nitrogen'), name: 'Nitrogen' },
+                { element: document.getElementById('phosphorus'), name: 'Phosphorus' },
+                { element: document.getElementById('potassium'), name: 'Potassium' },
+                { element: document.getElementById('ph'), name: 'pH' },
+                { element: document.getElementById('rainfall'), name: 'Rainfall' },
+                { element: document.getElementById('humidity'), name: 'Humidity' }
+            ];
+
+            let errors = [];
+
+            fields.forEach(field => {
+                const value = field.element.value;
+                if (!value) {
+                    errors.push(`${field.name} is required`);
+                } else {
+                    const numValue = parseFloat(value);
+                    const min = parseFloat(field.element.min);
+                    const max = parseFloat(field.element.max);
+
+                    if (isNaN(numValue)) {
+                        errors.push(`${field.name} must be a number`);
+                    } else if (min !== undefined && numValue < min) {
+                        errors.push(`${field.name} must be at least ${min}`);
+                    } else if (max !== undefined && numValue > max) {
+                        errors.push(`${field.name} must not exceed ${max}`);
+                    }
+                }
+            });
+
+            return errors;
+        }
+
+        function showValidationErrors(errors) {
+            alert(`Please fix the following issues:\n\n${errors.join('\n')}`);
+        }
+
+        function fetchWeatherData() {
+            const city = cityInput.value;
+
+            // Validate city input
+            if (!validateCity(city)) {
+                alert('Please enter a valid location');
+                return;
+            }
+
+            document.getElementById('advancedRecommendation').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+
+            // Fetch 5-day forecast
+            fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${WEATHER_API_KEY}&units=metric`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('City not found or API error');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Store current weather data
+                    currentWeatherData = data;
+                    weatherDataFetched = true;
+
+                    // Hide initial state notice
+                    initialStateNotice.classList.add('hidden');
+
+                    // Populate daily forecast
+                    weatherSummary.innerHTML = '';
+                    weatherSummary.classList.remove('hidden');
+
+                    // Filter to get one reading per day
+                    const dailyData = data.list.filter((reading, index) => index % 8 === 0);
+
+                    dailyData.forEach(forecast => {
+                        const day = new Date(forecast.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' });
+                        const temp = Math.round(forecast.main.temp);
+                        const weatherMain = forecast.weather[0].main;
+                        const icon = weatherIcons[weatherMain] || '🌈';
+
+                        const weatherCard = document.createElement('div');
+                        weatherCard.classList.add('weather-card');
+                        weatherCard.innerHTML = `
+                            <div class="day">${day}</div>
+                            <div class="weather-icon">${icon}</div>
+                            <div class="temp">${temp}°C</div>
+                            <div>${weatherMain}</div>
+                        `;
+                        weatherSummary.appendChild(weatherCard);
+                    });
+
+                    // Show and update chart
+                    chartContainer.style.display = 'block';
+                    createTemperatureChart(dailyData);
+
+                    // Show basic recommendation
+                    basicRecommendationSection.classList.remove('hidden');
+
+                    // Basic Crop Recommendation
+                    const avgTemp = dailyData[0].main.temp;
+                    const mainWeather = dailyData[0].weather[0].main;
+                    recommendCrops(avgTemp, mainWeather);
+
+                    // Show soil parameters section
+                    soilParametersSection.classList.remove('hidden');
+
+                    // Pre-fill humidity from weather data
+                    if (data.list && data.list[0] && data.list[0].main && data.list[0].main.humidity) {
+                        document.getElementById('humidity').value = data.list[0].main.humidity;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    alert('Error fetching weather data. Please check the city name and try again.');
+                });
+        }
+
+        function createTemperatureChart(forecastData) {
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+
+            // Destroy previous chart if exists
+            if (temperatureChart) {
+                temperatureChart.destroy();
+            }
+
+            // Prepare chart data
+            const labels = forecastData.map(d =>
+                new Date(d.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' })
+            );
+            const temperatures = forecastData.map(d => Math.round(d.main.temp));
+            const humidity = forecastData.map(d => d.main.humidity);
+
+            temperatureChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Temperature (°C)',
+                            data: temperatures,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Humidity (%)',
+                            data: humidity,
+                            borderColor: '#2196F3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Humidity (%)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '5-Day Weather Forecast',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                bottom: 20
+                            }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function recommendCrops(temperature, weatherCondition) {
+            const cropText = document.getElementById('cropText');
+            let climateZone = '';
+
+            if (temperature < 10) climateZone = 'cool';
+            else if (temperature >= 10 && temperature < 25) climateZone = 'temperate';
+            else climateZone = 'tropical';
+
+            const recommendation = cropRecommendations[weatherCondition]?.[climateZone] ||
+                'Consult local agricultural experts for specific crop recommendations.';
+
+            cropText.innerHTML = `<strong>${climateZone.charAt(0).toUpperCase() + climateZone.slice(1)} climate zone with ${weatherCondition.toLowerCase()} conditions:</strong><br>${recommendation}`;
+        }
+
+        async function getAdvancedRecommendation() {
+            // Check if weather data is available
+            if (!weatherDataFetched) {
+                alert('Please fetch weather data first!');
+                return;
+            }
+
+            // Validate soil parameters
+            const errors = validateSoilParameters();
+            if (errors.length > 0) {
+                showValidationErrors(errors);
+                return;
+            }
+
+            // Get current values
+            const nitrogen = document.getElementById('nitrogen').value;
+            const phosphorus = document.getElementById('phosphorus').value;
+            const potassium = document.getElementById('potassium').value;
+            const ph = document.getElementById('ph').value;
+            const rainfall = document.getElementById('rainfall').value;
+            const humidity = document.getElementById('humidity').value;
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('advancedRecommendation').style.display = 'none';
+
+            try {
+                // Get current weather data
+                const currentWeather = currentWeatherData.list[0].weather[0].main;
+                const currentTemp = currentWeatherData.list[0].main.temp;
+                const location = cityInput.value;
+
+                // Check if Gemini API key is provided
+                if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+                    throw new Error('Gemini API key not provided');
+                }
+
+                // Prepare prompt for Gemini API - Text recommendation
+                const textPrompt = `You are an agricultural expert. Based on the following parameters, recommend the best crops to grow and provide specific advice for cultivation:
+        
+                Location: ${location}
+                Current Weather: ${currentWeather}
+                Temperature: ${currentTemp}°C
+                Soil Parameters:
+                - Nitrogen (N): ${nitrogen} mg/kg
+                - Phosphorus (P): ${phosphorus} mg/kg
+                - Potassium (K): ${potassium} mg/kg
+                - Soil pH: ${ph}
+                - Annual Rainfall: ${rainfall} mm
+                - Humidity: ${humidity}%
+                
+                Please provide:
+                1. Top 3-5 recommended crops with brief explanations
+                2. Key cultivation tips for these crops
+                3. Any potential challenges given the current conditions
+                4. Soil management recommendations
+                
+                Format the response in HTML with appropriate headings and sections. DO NOT include markdown code blocks or syntax indicators like \`\`\`html or \`\`\`.`;
+
+                // Make request to Gemini API for text recommendation
+                const textResponse = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                parts: [
+                                    {
+                                        text: textPrompt
+                                    }
+                                ]
+                            }
+                        ],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 1024
+                        }
+                    })
+                });
+
+                if (!textResponse.ok) {
+                    throw new Error(`Gemini API error: ${textResponse.status}`);
+                }
+
+                const textData = await textResponse.json();
+
+                // Process the text response
+                if (textData.candidates && textData.candidates[0] && textData.candidates[0].content) {
+                    let recommendationText = textData.candidates[0].content.parts[0].text;
+
+                    // Clean up any markdown code block indicators
+                    recommendationText = recommendationText.replace(/```html|```/g, '');
+
+                    document.getElementById('geminiRecommendation').innerHTML = recommendationText;
+                    document.getElementById('advancedRecommendation').style.display = 'block';
+                } else {
+                    throw new Error('Invalid response format from Gemini API');
+                }
+            } catch (error) {
+                console.error('Error getting advanced recommendation:', error);
+
+                // Show a more informative error message if API key is missing
+                let errorMessage = `
+                    <div class="error-message">
+                        <p><strong>Error getting recommendations:</strong> ${error.message}</p>
+                    </div>
+                    
+                    <h3>Sample Recommendation</h3>
+                    <p>Here's a basic recommendation based on your parameters:</p>
+                    <div class="crop-card">
+                        <h4>Analyzing Your Soil Parameters:</h4>
+                        <p>
+                            N: ${nitrogen} mg/kg | P: ${phosphorus} mg/kg | K: ${potassium} mg/kg | pH: ${ph} | Rainfall: ${rainfall} mm
+                        </p>
+                        <p>
+                            Based on these values, consider crops that thrive in ${ph < 6.5 ? 'acidic' : ph > 7.5 ? 'alkaline' : 'neutral'} soils with 
+                            ${nitrogen < 50 ? 'low' : nitrogen > 100 ? 'high' : 'moderate'} nitrogen requirements.
+                        </p>
+                    </div>`;
+
+                document.getElementById('geminiRecommendation').innerHTML = errorMessage;
+                document.getElementById('advancedRecommendation').style.display = 'block';
+            } finally {
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Helper function to determine climate zone based on temperature
+        function getClimateZone(temperature) {
+            if (temperature < 10) return 'cool';
+            if (temperature >= 10 && temperature < 25) return 'temperate';
+            return 'tropical';
+        }
+
+        // Initialize with placeholder values for development
+        function initializeDemoValues() {
+            // Check if we're in development environment
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                cityInput.value = 'London';
+                document.getElementById('nitrogen').value = '90';
+                document.getElementById('phosphorus').value = '40';
+                document.getElementById('potassium').value = '80';
+                document.getElementById('ph').value = '6.5';
+                document.getElementById('rainfall').value = '1000';
+                document.getElementById('humidity').value = '65';
+            }
+        }
+
+        // Call initialization
+        //initializeDemoValues();
+
+        // Add this at the beginning of your existing script
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const closeButton = document.querySelector('.close-button');
+
+            // Toggle mobile menu with hamburger button
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenuButton.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+
+                // Prevent scrolling when menu is open
+                if (mobileMenu.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Close menu with X button
+            closeButton.addEventListener('click', function () {
+                mobileMenuButton.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            // Close menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-nav-links a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    mobileMenuButton.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            // Set active class based on current page
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+
+            function setActiveLink(links) {
+                links.forEach(link => {
+                    const linkPage = link.getAttribute('href');
+                    if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            setActiveLink(navLinks);
+            setActiveLink(mobileNavLinks);
+        });
+    </script>
+</body>
+
+</html>

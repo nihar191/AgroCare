@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Detection - AgroCare</title>
+    <style>
+        :root {
+            --primary: #2c7a2a;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary: #f8b500;
+            --secondary-dark: #e69b00;
+            --text: #333;
+            --background: #f5f8f5;
+            --card-bg: #ffffff;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --info: #2196f3;
+        }
+
+        /* Reset and Base Styles for Navbar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Close Button styles */
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 201;
+        }
+
+        .close-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #2c7a2a;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            z-index: 200;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links a.active {
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #f8b500;
+            border-radius: 3px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            color: white;
+            border: 1px solid white;
+            background: transparent;
+        }
+
+        .btn-login:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-signup {
+            background-color: var(--secondary);
+            color: var(--text);
+            border: none;
+        }
+
+        .btn-signup:hover {
+            background-color: var(--secondary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-button {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .mobile-menu-button span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #2c7a2a;
+            z-index: 100;
+            padding: 6rem 2rem 2rem;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+            display: flex;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-nav-links a.active {
+            font-weight: 600;
+            color: #f8b500;
+        }
+
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .mobile-auth-buttons .btn {
+            text-align: center;
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 768px) {
+
+            .nav-links,
+            .auth-buttons {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            /* Menu Button Animation */
+            .mobile-menu-button.active span:nth-child(1) {
+                transform: translateY(10px) rotate(45deg);
+            }
+
+            .mobile-menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .mobile-menu-button.active span:nth-child(3) {
+                transform: translateY(-10px) rotate(-45deg);
+            }
+        }
+
+        /* Main Content Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        /* Cards and Containers */
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            border: 2px dashed #aaa;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #fcfcfc;
+            transition: all 0.3s;
+        }
+
+        .upload-section:hover {
+            border-color: var(--primary);
+            background-color: #f0f7f0;
+        }
+
+        .upload-section.highlight {
+            border-color: var(--primary);
+            background-color: #e8f5e9;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 15px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        #preview-container {
+            margin: 20px auto;
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #preview {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Results Section */
+        #results-section {
+            display: none;
+        }
+
+        .section-title {
+            color: var(--primary);
+            margin: 30px 0 15px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9fbf9;
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary-light);
+        }
+
+        .result-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .scientific-name {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .common-name {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .confidence {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .confidence-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .confidence-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 5px;
+            transition: width 1s ease-out;
+        }
+
+        .disease-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff8e1;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .remedies-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error Message */
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            padding: 15px;
+            margin-top: 15px;
+            background-color: #ffebee;
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Chart container */
+        .chart-container {
+            margin-top: 30px;
+            height: 250px;
+            width: 100%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Tabs for remedies */
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Care & Remedies Info Box */
+        .care-info-box {
+            background-color: #f0f7f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .care-section {
+            margin-bottom: 20px;
+        }
+
+        .care-section h3 {
+            color: var(--primary);
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .care-section ul {
+            padding-left: 20px;
+        }
+
+        .care-section li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">🌱 AgroCare</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="weather_forecast.html">Crop Advisor</a>
+                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-login">Login</a>
+                <a href="signup.html" class="btn btn-signup">Sign Up</a>
+            </div>
+            <div class="mobile-menu-button">
+                <span class="bar bar-1"></span>
+                <span class="bar bar-2"></span>
+                <span class="bar bar-3"></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-menu">
+        <div class="close-button">✕</div>
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="weather_forecast.html">Crop Advisor</a>
+                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+        </div>
+        <div class="mobile-auth-buttons">
+            <a href="login.html" class="btn btn-login">Login</a>
+            <a href="signup.html" class="btn btn-signup">Sign Up</a>
+        </div>
+    </div>
+
+    <main>
+        <h1><i class="fas fa-seedling"></i> Plant Identification & Care</h1>
+
+        <div class="container">
+            <div class="upload-section" id="drop-area">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h2>Upload a plant image for identification</h2>
+                <p>Get instant plant identification and care recommendations</p>
+                <input type="file" id="file-input" accept="image/*">
+                <button class="upload-btn" id="upload-btn"><i class="fas fa-image"></i> Select Image</button>
+                <p>or drag and drop an image here</p>
+                <div id="preview-container">
+                    <img id="preview" src="" alt="Preview">
+                </div>
+            </div>
+
+            <div class="error-message" id="error-message"></div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing your plant image...</p>
+            </div>
+
+            <div id="results-section">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-leaf"></i> Identification Results
+                    </div>
+                    <div class="card-body">
+                        <div id="results-list"></div>
+
+                        <!-- Plant confidence chart -->
+                        <div class="chart-container">
+                            <canvas id="confidenceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="care-remedies-card">
+                    <div class="card-header">
+                        <i class="fas fa-seedling"></i> Plant Care & Remedies
+                    </div>
+                    <div class="card-body">
+                        <div class="care-info-box">
+                            <div class="care-section" id="treatment-section">
+                                <h3><i class="fas fa-medkit"></i> Treatment</h3>
+                                <div id="treatment-info"></div>
+                            </div>
+
+                            <div class="care-section" id="prevention-section">
+                                <h3><i class="fas fa-shield-alt"></i> Prevention</h3>
+                                <div id="prevention-info"></div>
+                            </div>
+
+                            <div class="care-section" id="care-section">
+                                <h3><i class="fas fa-hand-holding-seedling"></i> Care Tips</h3>
+                                <div id="care-info"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AgriSmart - Plant Identification & Care</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // DOM elements
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('preview-container');
+        const loading = document.getElementById('loading');
+        const resultsSection = document.getElementById('results-section');
+        const resultsList = document.getElementById('results-list');
+        const errorMessage = document.getElementById('error-message');
+        const treatmentInfo = document.getElementById('treatment-info');
+        const preventionInfo = document.getElementById('prevention-info');
+        const careInfo = document.getElementById('care-info');
+        const careRemediesCard = document.getElementById('care-remedies-card');
+
+        // Global variables
+        let confidenceChart = null;
+        let plantData = [];
+
+        // API Keys and Endpoints
+        const PLANT_ID_API_KEY = "E9EK2jv97Awm7WLEURg7fQhF7qF7LP29R7IuYBBlR2gmJarM9X";
+        const GEMINI_API_KEY = "AIzaSyCLBeMVgOrN7lR8weOm2P5-Bit4F3HuOEo";
+        const PLANT_ID_API_URL = "https://api.plant.id/v2/identify";
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+
+        // Event listeners for drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('highlight');
+        }
+
+        // Handle file drop
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Handle file selection via button
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function () {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file && file.type.startsWith('image/')) {
+                // Reset UI
+                resetUI();
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+
+                // Process and send image to backend
+                uploadImageToPlantId(file);
+            } else {
+                showError('Please select a valid image file.');
+            }
+        }
+
+        function resetUI() {
+            resultsSection.style.display = 'none';
+            resultsList.innerHTML = '';
+            treatmentInfo.innerHTML = '';
+            preventionInfo.innerHTML = '';
+            careInfo.innerHTML = '';
+            careRemediesCard.style.display = 'none';
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+
+            // Reset charts
+            if (confidenceChart) {
+                confidenceChart.destroy();
+                confidenceChart = null;
+            }
+
+            // Reset plant data
+            plantData = [];
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            loading.style.display = 'none';
+        }
+
+        function uploadImageToPlantId(file) {
+            // Show loading
+            loading.style.display = 'block';
+
+            // Read file as base64
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                // Extract base64 data (remove data URL prefix)
+                const base64Data = reader.result.split(',')[1];
+
+                // Create payload for Plant.id API
+                const payload = {
+                    api_key: PLANT_ID_API_KEY,
+                    images: [base64Data],
+                    modifiers: ["crops_fast", "similar_images"],
+                    plant_language: "en",
+                    plant_details: ["common_names", "url", "wiki_description", "taxonomy"]
+                };
+
+                console.log("Sending request to Plant.id API...");
+
+                // Send to Plant.id API
+                fetch(PLANT_ID_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Plant.id API request failed with status ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(responseData => {
+                        console.log("Full Plant.id API response:", responseData);
+
+                        // Extract and store plant data for charts
+                        if (responseData.suggestions && responseData.suggestions.length > 0) {
+                            responseData.suggestions.slice(0, 5).forEach(suggestion => {
+                                plantData.push({
+                                    name: suggestion.plant_name,
+                                    probability: suggestion.probability
+                                });
+                            });
+                        }
+
+                        // Display the plant identification results
+                        displayResults(responseData);
+                        loading.style.display = 'none';
+                        resultsSection.style.display = 'block';
+
+                        // Create confidence chart
+                        createConfidenceChart();
+
+                        // Get care recommendations based on the identified plant
+                        if (responseData.suggestions && responseData.suggestions.length > 0) {
+                            const plantName = responseData.suggestions[0].plant_name;
+
+                            // Make care recommendations section visible
+                            careRemediesCard.style.display = 'block';
+
+                            // Get care recommendations
+                            getPlantCareInfo(plantName);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showError('Failed to identify plant: ' + error.message);
+                    });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function createConfidenceChart() {
+            const ctx = document.getElementById('confidenceChart').getContext('2d');
+
+            // Extract data for chart
+            const labels = plantData.map(plant => plant.name);
+            const data = plantData.map(plant => Math.round(plant.probability * 100));
+
+            // Create chart
+            confidenceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Confidence (%)',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(255, 99, 132, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Plant Identification Confidence'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function getPlantCareInfo(plantName) {
+            // Show loading in care info sections
+            treatmentInfo.innerHTML = '<div class="spinner"></div><p>Getting care recommendations...</p>';
+            preventionInfo.innerHTML = '<div class="spinner"></div>';
+            careInfo.innerHTML = '<div class="spinner"></div>';
+
+            // Create prompt for Gemini based on plant name
+            const prompt = `I have identified a ${plantName} plant. Please provide:
+1. Common issues that can affect ${plantName} plants and their treatments
+2. Preventive care tips for ${plantName}
+3. General care tips for maintaining a healthy ${plantName} plant (watering, light, soil, etc.)
+
+Format your response in three separate sections: Treatment, Prevention, and Care Tips. Use bullet points for easy reading.`;
+
+            console.log("Sending request to Gemini API with prompt:", prompt);
+
+            // Request to Gemini API
+            fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }]
+                })
+            })
+                .then(response => {
+                    console.log("Gemini API response status:", response.status);
+                    if (!response.ok) {
+                        throw new Error('Gemini API request failed with status ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Gemini API response data:", data);
+
+                    // Check if we have the expected response structure
+                    if (data && data.candidates && data.candidates.length > 0 &&
+                        data.candidates[0].content && data.candidates[0].content.parts &&
+                        data.candidates[0].content.parts.length > 0) {
+
+                        // Extract care info text from Gemini response
+                        const careText = data.candidates[0].content.parts[0].text;
+                        displayCareInfo(careText);
+                    } else {
+                        throw new Error('Unexpected response format from Gemini API');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error getting care info:', error);
+                    // Show error message in care sections
+                    const errorMsg = `<p>Could not retrieve care information: ${error.message}</p>
+                <p>Please check your Gemini API key and try again.</p>`;
+                    treatmentInfo.innerHTML = errorMsg;
+                    preventionInfo.innerHTML = errorMsg;
+                    careInfo.innerHTML = errorMsg;
+                });
+        }
+
+        function displayCareInfo(careText) {
+            if (!careText) {
+                treatmentInfo.innerHTML = '<p>No specific treatment information available at this time.</p>';
+                preventionInfo.innerHTML = '<p>No prevention information available.</p>';
+                careInfo.innerHTML = '<p>No care tips available.</p>';
+                return;
+            }
+
+            // Split the content based on sections
+            let sections = {
+                treatment: '',
+                prevention: '',
+                care: ''
+            };
+
+            // Simple parser for the sections
+            const content = careText.split('\n\n');
+            let currentSection = 'treatment'; // Default section
+
+            content.forEach(paragraph => {
+                // Check if paragraph is a section header
+                if (paragraph.toLowerCase().includes('treatment') ||
+                    paragraph.toLowerCase().includes('common issues') ||
+                    paragraph.toLowerCase().includes('remedies')) {
+                    currentSection = 'treatment';
+                    return;
+                } else if (paragraph.toLowerCase().includes('prevention') ||
+                    paragraph.toLowerCase().includes('preventive')) {
+                    currentSection = 'prevention';
+                    return;
+                } else if (paragraph.toLowerCase().includes('care tips') ||
+                    paragraph.toLowerCase().includes('general care') ||
+                    paragraph.toLowerCase().includes('maintaining')) {
+                    currentSection = 'care';
+                    return;
+                }
+
+                // Add content to current section
+                sections[currentSection] += paragraph + '\n\n';
+            });
+
+            // Function to format content properly, removing Markdown asterisks
+            const formatContent = (content) => {
+                if (!content.trim()) return '<p>No information available.</p>';
+
+                // Replace markdown-style bold/italic with HTML tags
+                content = content
+                    .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')  // Bold and italic
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Bold
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>');  // Italic
+
+                // Format bullet points
+                if (content.includes('* ')) {
+                    let htmlContent = '<ul>';
+
+                    // Split by bullet points
+                    const bullets = content.split('* ').filter(item => item.trim());
+
+                    bullets.forEach(bullet => {
+                        htmlContent += `<li>${bullet.trim()}</li>`;
+                    });
+
+                    htmlContent += '</ul>';
+                    return htmlContent;
+                }
+
+                // If no bullet points, format as paragraphs
+                return '<p>' + content
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>')
+                    + '</p>';
+            };
+
+            // Special formatting for care section to add icons
+            const formatCareSection = (content) => {
+                if (!content.trim()) return '<p>No care information available.</p>';
+
+                // Define care categories and their icons
+                const careCategories = {
+                    'Light:': '<i class="fas fa-sun"></i>',
+                    'Watering:': '<i class="fas fa-tint"></i>',
+                    'Soil:': '<i class="fas fa-mountain"></i>',
+                    'Humidity:': '<i class="fas fa-cloud"></i>',
+                    'Temperature:': '<i class="fas fa-thermometer-half"></i>',
+                    'Fertilizing:': '<i class="fas fa-seedling"></i>',
+                    'Pruning:': '<i class="fas fa-cut"></i>',
+                    'Repotting:': '<i class="fas fa-expand"></i>',
+                    'Pests:': '<i class="fas fa-bug"></i>',
+                    'Propagation:': '<i class="fas fa-clone"></i>'
+                };
+
+                // Replace Markdown formatting
+                content = content
+                    .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+                // Format with icons
+                let htmlContent = '<ul class="care-list">';
+
+                // Split by lines or paragraphs
+                const lines = content.split('\n').filter(line => line.trim());
+
+                lines.forEach(line => {
+                    // Check if line starts with a care category
+                    let formattedLine = line;
+
+                    for (const [category, icon] of Object.entries(careCategories)) {
+                        if (line.includes(category)) {
+                            formattedLine = line.replace(category, `${icon} <strong>${category}</strong>`);
+                            break;
+                        }
+                    }
+
+                    htmlContent += `<li>${formattedLine}</li>`;
+                });
+
+                htmlContent += '</ul>';
+                return htmlContent;
+            };
+
+            // Update the content of each section
+            treatmentInfo.innerHTML = formatContent(sections.treatment);
+            preventionInfo.innerHTML = formatContent(sections.prevention);
+            careInfo.innerHTML = formatCareSection(sections.care);
+
+            // Add CSS for care list
+            const style = document.createElement('style');
+            style.textContent = `
+.care-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+.care-list li {
+    margin-bottom: 15px;
+    padding-left: 5px;
+}
+.care-list li i {
+    color: var(--primary);
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+`;
+            document.head.appendChild(style);
+        }
+
+        function displayResults(data) {
+            resultsList.innerHTML = '';
+
+            if (!data.suggestions || data.suggestions.length === 0) {
+                resultsList.innerHTML = '<p>No plants were identified with confidence. Please try another image.</p>';
+                return;
+            }
+
+            // Display top 3 plant suggestions
+            data.suggestions.slice(0, 3).forEach((suggestion, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+
+                // Get common name if available
+                let commonName = 'Unknown';
+                if (suggestion.plant_details && suggestion.plant_details.common_names && suggestion.plant_details.common_names.length > 0) {
+                    commonName = suggestion.plant_details.common_names.join(', ');
+                }
+
+                // Calculate confidence percentage
+                const confidencePercent = Math.round(suggestion.probability * 100);
+
+                // Create HTML for the result item
+                resultItem.innerHTML = `
+    <div class="scientific-name">${suggestion.plant_name}</div>
+    <div class="common-name">Common name: ${commonName}</div>
+    <div class="confidence">Confidence: ${confidencePercent}%</div>
+    <div class="confidence-bar-container">
+        <div class="confidence-bar" style="width: ${confidencePercent}%"></div>
+    </div>
+`;
+
+                // Add additional details if available
+                if (suggestion.plant_details && suggestion.plant_details.wiki_description && suggestion.plant_details.wiki_description.value) {
+                    const description = suggestion.plant_details.wiki_description.value;
+                    // Add only the first 150 characters of the description
+                    const shortDescription = description.length > 150 ? description.substring(0, 150) + '...' : description;
+
+                    const descriptionDiv = document.createElement('div');
+                    descriptionDiv.className = 'plant-description';
+                    descriptionDiv.innerHTML = `<p>${shortDescription}</p>`;
+                    resultItem.appendChild(descriptionDiv);
+                }
+
+                resultsList.appendChild(resultItem);
+            });
+
+            // Add a disclaimer
+            const disclaimer = document.createElement('p');
+            disclaimer.style.fontSize = '12px';
+            disclaimer.style.color = '#777';
+            disclaimer.style.marginTop = '20px';
+            disclaimer.innerHTML = 'Note: Plant identification results are based on visual analysis and may not be 100% accurate. Always consult with a professional botanist for complete identification.';
+            resultsList.appendChild(disclaimer);
+        }
+
+        // Function to handle keyboard events for accessibility
+        function handleKeyboardEvents() {
+            uploadBtn.addEventListener('keydown', function (e) {
+                // Space or Enter key
+                if (e.keyCode === 32 || e.keyCode === 13) {
+                    e.preventDefault();
+                    fileInput.click();
+                }
+            });
+
+            dropArea.addEventListener('keydown', function (e) {
+                // Space or Enter key
+                if (e.keyCode === 32 || e.keyCode === 13) {
+                    e.preventDefault();
+                    fileInput.click();
+                }
+            });
+        }
+
+        // Add accessibility features
+        function enhanceAccessibility() {
+            // Make drop area focusable
+            dropArea.setAttribute('tabindex', '0');
+            dropArea.setAttribute('role', 'button');
+            dropArea.setAttribute('aria-label', 'Upload plant image');
+
+            // Add keyboard support
+            handleKeyboardEvents();
+        }
+
+        // Initialize the application
+        function initApp() {
+            enhanceAccessibility();
+            resetUI();
+
+            // Add event listener for window resize to adjust chart
+            window.addEventListener('resize', function () {
+                if (confidenceChart) {
+                    confidenceChart.resize();
+                }
+            });
+        }
+
+        // Initialize the app when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Existing initialization code
+            initApp();
+
+            // Mobile menu functionality
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const closeButton = document.querySelector('.close-button');
+
+            // Toggle mobile menu with hamburger button
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenuButton.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+
+                // Prevent scrolling when menu is open
+                if (mobileMenu.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Close menu with X button
+            closeButton.addEventListener('click', function () {
+                mobileMenuButton.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            // Close menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-nav-links a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    mobileMenuButton.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            // Set active class based on current page
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+
+            function setActiveLink(links) {
+                links.forEach(link => {
+                    const linkPage = link.getAttribute('href');
+                    if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            setActiveLink(navLinks);
+            setActiveLink(mobileNavLinks);
+        });
+    </script>
+</body>
+
+</html>
