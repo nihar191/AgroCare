@@ -15,6 +15,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 3rem;
+            color: #147a49;
+        }
+
         /* Close Button styles */
         .close-button {
             position: absolute;
@@ -658,7 +665,7 @@
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
             </div>
-          
+
             <div class="mobile-menu-button">
                 <span class="bar bar-1"></span>
                 <span class="bar bar-2"></span>
@@ -679,10 +686,6 @@
             <a href="dashboard.html">User Dashboard</a>
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
-        </div>
-        <div class="mobile-auth-buttons">
-            <a href="login.html" class="btn btn-login">Login</a>
-            <a href="signup.html" class="btn btn-signup">Sign Up</a>
         </div>
     </div>
 
@@ -764,6 +767,11 @@
             <div id="geminiRecommendation" class="recommendation-content"></div>
         </div>
     </div>
+    <footer>
+        <div class="footer-bottom">
+            <p><strong>&copy; 2025 AgroCare | All Rights Reserved.</strong></p>
+        </div>
+    </footer>
 
     <script>
         // ======== API KEYS - REPLACE THESE ========
@@ -1181,7 +1189,7 @@
 
                     document.getElementById('geminiRecommendation').innerHTML = recommendationText;
                     document.getElementById('advancedRecommendation').style.display = 'block';
-                    
+
                     // Update recommendation count when successfully generating a recommendation
                     updateWeatherRecommendationCount();
                 } else {
