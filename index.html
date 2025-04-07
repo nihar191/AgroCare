@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgroCare - Crop Management & Advisory Platform</title>
+  <title>AgroCare - Crop Management & Advisory Platform for Indian Farmers</title>
   <style>
     /* Variables */
     :root {
@@ -30,6 +30,8 @@
       --card-dark: #2c3e50;
       --shadow-light: rgba(0, 0, 0, 0.1);
       --shadow-dark: rgba(0, 0, 0, 0.3);
+      --accent-orange: #FF7722;
+      --accent-blue: #007BFF;
     }
 
     /* Reset and Base Styles */
@@ -37,7 +39,29 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-50px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
     }
 
     body {
@@ -47,6 +71,7 @@
       padding-top: 80px;
       margin: 0;
       min-height: 100vh;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='%232c7a2a' fill-opacity='.03'/%3E%3Cpath d='M30 30h30v30H30z' fill='%232c7a2a' fill-opacity='.03'/%3E%3C/svg%3E");
     }
 
     body.dark-mode {
@@ -81,11 +106,12 @@
     /* Header Styles */
     header {
       background-color: #2c7a2a;
+      background-image: linear-gradient(135deg, #2c7a2a 0%, #1b5e20 100%);
       padding: 1rem;
       position: fixed;
       width: 100%;
       z-index: 100;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
       top: 0;
       left: 0;
     }
@@ -110,6 +136,11 @@
       z-index: 200;
     }
 
+    .logo-img {
+      font-size: 1.8rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
     .nav-links {
       display: flex;
       gap: 1.5rem;
@@ -127,6 +158,21 @@
     .nav-links a:hover {
       color: #f8b500;
       transform: translateY(-2px);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #f8b500;
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
     }
 
     .nav-links a.active {
@@ -210,6 +256,7 @@
       width: 100%;
       height: 100vh;
       background-color: #2c7a2a;
+      background-image: linear-gradient(135deg, #2c7a2a 0%, #1b5e20 100%);
       z-index: 100;
       padding: 6rem 2rem 2rem;
       flex-direction: column;
@@ -295,145 +342,301 @@
 
     /* Hero Section */
     .hero {
-      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/api/placeholder/1200/600');
+      background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("bg.jpg");
       background-size: cover;
       background-position: center;
-      height: 70vh;
+      background-attachment: fixed;
+      min-height: 80vh;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       text-align: center;
-      padding-top: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('/api/placeholder/1200/600');
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      animation: heroZoom 20s infinite alternate ease-in-out;
+    }
+
+    @keyframes heroZoom {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
     }
 
     .hero-content {
       max-width: 800px;
-      padding: 0 1rem;
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
+      animation: fadeIn 1s ease-out;
     }
 
     .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+      font-size: 2.8rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
+      font-size: 1.3rem;
+      margin-bottom: 2.5rem;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     .hero-buttons {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
       justify-content: center;
     }
 
     .btn-large {
-      padding: 0.75rem 1.5rem;
+      padding: 0.75rem 1.8rem;
       font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 30px;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
     }
 
     .btn-primary {
       background-color: #2c7a2a;
       color: white;
       border: none;
+      box-shadow: 0 4px 15px rgba(44, 122, 42, 0.4);
+    }
+
+    .btn-primary:hover {
+      background-color: #1b5e20;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(44, 122, 42, 0.5);
     }
 
     .btn-secondary {
       background-color: white;
       color: #2c7a2a;
       border: none;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
     }
+
+    .btn-secondary:hover {
+      background-color: #f8f8f8;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Indian Flag Colors */
+    .india-flag-bar {
+      display: flex;
+      width: 100%;
+      height: 10px;
+    }
+
+    .india-flag-bar div {
+      height: 100%;
+      flex: 1;
+    }
+
+    .india-saffron { background-color: #FF9933; }
+    .india-white { background-color: #FFFFFF; }
+    .india-green { background-color: #138808; }
 
     /* Features Section */
     .features {
-      padding: 4rem 1rem;
+      padding: 6rem 1rem;
       max-width: 1200px;
       margin: 0 auto;
     }
 
     .section-title {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 4rem;
+      animation: fadeIn 1s ease-out;
     }
 
     .section-title h2 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       color: #2c7a2a;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-title h2::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 4px;
+      background-color: #f8b500;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
     }
 
     .section-title p {
       color: #666;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
     }
 
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
     }
 
     .feature-card {
       background-color: white;
-      border-radius: 10px;
+      border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      transition: all 0.4s ease;
+      position: relative;
+      z-index: 1;
     }
 
     .feature-card:hover {
-      transform: translateY(-10px);
+      transform: translateY(-15px);
+      box-shadow: 0 15px 35px rgba(44, 122, 42, 0.15);
     }
 
     .feature-img {
-      height: 200px;
-      background-color: #eee;
+      height: 180px;
+      background-color: #eef7ee;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
+      font-size: 4rem;
       color: #2c7a2a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-img::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url('/api/placeholder/400/320');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.2;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-img::before {
+      transform: scale(1.1);
+    }
+
+    .feature-img span {
+      position: relative;
+      z-index: 2;
+      animation: float 3s ease-in-out infinite;
     }
 
     .feature-content {
-      padding: 1.5rem;
+      padding: 1.8rem;
+      position: relative;
     }
 
     .feature-content h3 {
       color: #2c7a2a;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+
+    .feature-content p {
+      color: #555;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .feature-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+    }
+
+    .feature-link h3 {
+      color: #2c7a2a;
+    }
+
+    .feature-link:hover {
+      text-decoration: none;
     }
 
     /* Subscription Plans */
     .subscription {
-      background-color: #eef7ee;
-      padding: 4rem 1rem;
+      background-color: #f0f7f0;
+      padding: 6rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .subscription::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background-color: rgba(44, 122, 42, 0.05);
+      border-radius: 50%;
+      top: -150px;
+      left: -150px;
+    }
+
+    .subscription::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: rgba(248, 181, 0, 0.05);
+      border-radius: 50%;
+      bottom: -100px;
+      right: -100px;
     }
 
     .subscription-content {
       max-width: 1200px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     .plans-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
+      gap: 2.5rem;
+      margin-top: 3rem;
     }
 
     .plan-card {
       background-color: white;
-      border-radius: 10px;
+      border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       text-align: center;
-      transition: transform 0.3s ease;
+      transition: all 0.4s ease;
       position: relative;
+      z-index: 1;
     }
 
     .plan-card:hover {
-      transform: scale(1.03);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
     }
 
     .popular-badge {
@@ -442,32 +645,67 @@
       right: 0;
       background-color: #f8b500;
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       font-weight: bold;
-      font-size: 0.8rem;
-      border-bottom-left-radius: 10px;
+      font-size: 0.85rem;
+      border-bottom-left-radius: 15px;
+      z-index: 2;
+      box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.1);
+      animation: pulse 2s infinite;
     }
 
     .plan-header {
-      padding: 2rem;
-      background-color: #f5f7fa;
+      padding: 2.5rem 2rem 1.5rem;
+      background-color: #f9fafa;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background-color: #2c7a2a;
+    }
+
+    .plan-card:nth-child(2) .plan-header::before {
+      background-color: #f8b500;
+    }
+
+    .plan-card:nth-child(3) .plan-header::before {
+      background-color: #FF7722;
     }
 
     .plan-header h3 {
       color: #2c7a2a;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
+      font-size: 1.6rem;
     }
 
     .plan-price {
       font-size: 2.5rem;
       font-weight: bold;
       color: #333;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .currency {
+      font-size: 1.3rem;
+      margin-right: 5px;
+      font-weight: 500;
+      color: #555;
     }
 
     .plan-price span {
       font-size: 1rem;
       color: #666;
+      margin-left: 5px;
     }
 
     .plan-features {
@@ -476,13 +714,15 @@
 
     .plan-features ul {
       list-style: none;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      text-align: left;
     }
 
     .plan-features li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
       position: relative;
-      padding-left: 1.5rem;
+      padding-left: 2rem;
+      color: #444;
     }
 
     .plan-features li::before {
@@ -490,17 +730,27 @@
       color: #2c7a2a;
       position: absolute;
       left: 0;
+      font-weight: bold;
     }
 
     .btn-plan {
-      width: 80%;
+      width: 100%;
       display: inline-block;
-      padding: 0.75rem 0;
+      padding: 0.85rem 0;
+      border-radius: 30px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-plan:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(44, 122, 42, 0.2);
     }
 
     /* Testimonials */
     .testimonials {
-      padding: 4rem 1rem;
+      padding: 6rem 1rem;
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -508,20 +758,40 @@
     .testimonial-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
+      gap: 2.5rem;
     }
 
     .testimonial-card {
       background-color: white;
-      border-radius: 10px;
-      padding: 2rem;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 6rem;
+      color: rgba(44, 122, 42, 0.1);
+      font-family: Georgia, serif;
+      line-height: 1;
     }
 
     .testimonial-text {
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       font-style: italic;
-      color: #666;
+      color: #555;
+      position: relative;
+      z-index: 1;
     }
 
     .testimonial-author {
@@ -530,45 +800,86 @@
     }
 
     .author-avatar {
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background-color: #eee;
+      background-color: #eef7ee;
       margin-right: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
       color: #2c7a2a;
+      border: 2px solid #2c7a2a;
+    }
+
+    .author-info {
+      line-height: 1.4;
+    }
+
+    .author-info strong {
+      color: #333;
+      font-size: 1.1rem;
+      display: block;
+    }
+
+    .author-info p {
+      color: #666;
+      font-size: 0.9rem;
     }
 
     /* Call to Action */
     .cta {
       background-color: #2c7a2a;
+      background-image: linear-gradient(135deg, #2c7a2a 0%, #1b5e20 100%);
       color: white;
-      padding: 4rem 1rem;
+      padding: 5rem 1rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('/api/placeholder/1200/400');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.1;
+      z-index: 0;
     }
 
     .cta-content {
       max-width: 800px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     .cta h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 1s ease-out;
     }
 
     .cta p {
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      font-size: 1.2rem;
+    }
+
+    .cta .btn-large {
+      box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
     }
 
     /* Footer */
     footer {
       background-color: #1a3d19;
       color: white;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem 2rem;
     }
 
     .footer-content {
@@ -576,12 +887,25 @@
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
+      gap: 3rem;
     }
 
     .footer-col h4 {
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .footer-col h4::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50px;
+      height: 3px;
+      background-color: #f8b500;
+      border-radius: 2px;
     }
 
     .footer-col ul {
@@ -589,198 +913,226 @@
     }
 
     .footer-col li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
     }
 
     .footer-col a {
       color: #ccc;
       text-decoration: none;
-      transition: color 0.3s ease;
+      transition: all 0.3s ease;
+      position: relative;
+      padding-left: 15px;
+    }
+
+    .footer-col a::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      transition: all 0.3s ease;
     }
 
     .footer-col a:hover {
       color: white;
+      padding-left: 20px;
+    }
+
+    .footer-col a:hover::before {
+      color: #f8b500;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .social-icon:hover {
+      background-color: #f8b500;
+      transform: translateY(-5px);
     }
 
     .footer-bottom {
       text-align: center;
       padding-top: 2rem;
-      margin-top: 2rem;
+      margin-top: 3rem;
       border-top: 1px solid #3a5e39;
-      color: #999;
+      color: #aaa;
     }
 
     /* Chatbot Button */
     .chatbot-button {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 60px;
-      height: 60px;
+      bottom: 30px;
+      right: 30px;
+      width: 65px;
+      height: 65px;
       border-radius: 50%;
       background-color: #f8b500;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      font-size: 1.8rem;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
       cursor: pointer;
       transition: all 0.3s ease;
+      z-index: 100;
     }
 
     .chatbot-button:hover {
-      transform: scale(1.1);
-    }
-
-    .feature-link {
-      text-decoration: none;
-      /* Remove underline */
-      color: inherit;
-      /* Inherit text color from parent */
-      display: block;
-      /* Make the link cover the entire card */
-      height: 100%;
-      /* Ensure the link covers the full height */
-    }
-
-    .feature-link h3 {
-      color: #2c7a2a;
-      /* Ensure the heading color matches your design */
-    }
-
-    .feature-link:hover {
-      text-decoration: none;
-      /* Ensure underline doesn't reappear on hover */
+      transform: scale(1.1) rotate(15deg);
+      background-color: #e69b00;
     }
 
     /* Chatbot Container */
     #chatbot-container {
       position: fixed;
-      bottom: 90px;
-      right: 20px;
-      width: 350px;
-      height: 500px;
+      bottom: 110px;
+      right: 30px;
+      width: 380px;
+      height: 520px;
       background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
       display: flex;
       flex-direction: column;
       overflow: hidden;
       z-index: 1000;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
     }
 
     .chatbot-hidden {
-      transform: translateY(20px);
+      transform: translateY(30px);
       opacity: 0;
       pointer-events: none;
     }
 
-    /* Chatbot Header */
+    /* Chatbot Header (continuing from where it was cut off) */
     .chatbot-header {
       background-color: #2c7a2a;
-      color: white;
-      padding: 15px;
+      background-image: linear-gradient(135deg, #2c7a2a 0%, #1b5e20 100%);
+      padding: 15px 20px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-    }
-
-    .chatbot-header h3 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-
-    .chatbot-close {
-      cursor: pointer;
-      font-size: 1.5rem;
-    }
-
-    /* Chatbot Messages */
-    .chatbot-messages {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .bot-message, .user-message {
-      display: flex;
-      gap: 10px;
-      max-width: 80%;
-    }
-
-    .user-message {
-      flex-direction: row-reverse;
-      align-self: flex-end;
-    }
-
-    .avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background-color: #eef7ee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .user-message .avatar {
-      background-color: #f8b500;
-    }
-
-    .message {
-      padding: 10px 15px;
-      border-radius: 15px;
-      background-color: #eef7ee;
-      font-size: 0.9rem;
-    }
-
-    .user-message .message {
-      background-color: #f8b500;
-      color: #333;
-    }
-
-    /* Chatbot Input */
-    .chatbot-input {
-      display: flex;
-      padding: 10px;
-      border-top: 1px solid #eee;
-    }
-
-    .chatbot-input input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      outline: none;
-    }
-
-    .chatbot-input button {
-      background-color: #2c7a2a;
       color: white;
-      border: none;
-      border-radius: 20px;
-      padding: 10px 15px;
-      margin-left: 10px;
-      cursor: pointer;
     }
 
-    .chatbot-input button:hover {
-      background-color: #1a3d19;
+    .chatbot-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chatbot-title span {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* Indian-specific elements */
+    .indian-flag-colors {
+      display: flex;
+      height: 5px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .indian-flag-colors div {
+      height: 100%;
+      flex: 1;
+    }
+    
+    .saffron {
+      background-color: #FF9933;
+    }
+    
+    .white {
+      background-color: #FFFFFF;
+    }
+    
+    .green {
+      background-color: #138808;
+    }
+    
+    /* Weather & Crop Recommendation Styles */
+    .weather-crop-section {
+      background-color: #f0f7f0;
+      padding: 6rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .weather-card {
+      background: linear-gradient(135deg, #87CEEB, #1E90FF);
+      color: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s ease;
+    }
+    
+    .crop-recommendation {
+      background: linear-gradient(135deg, #8BC34A, #4CAF50);
+      color: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s ease;
+    }
+    
+    .weather-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .crop-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Update subscription plans to show in Rupees */
+    .plan-price .currency {
+      font-size: 1.3rem;
+      margin-right: 5px;
+      font-weight: 500;
+      color: #555;
     }
   </style>
 </head>
 
 <body>
-  <!-- Header -->
+  <!-- Indian Flag Color Bar at the very top -->
+  <div class="india-flag-bar">
+    <div class="india-saffron"></div>
+    <div class="india-white"></div>
+    <div class="india-green"></div>
+  </div>
+
   <header>
-    <nav class="navbar">
-      <a href="index.html" class="logo">🌱 AgroCare</a>
+    <div class="navbar">
+      <a href="#" class="logo">
+        <span class="logo-img">🌱</span>
+        AgroCare India
+      </a>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="weather_forecast.html">Crop Advisor</a>
@@ -791,18 +1143,18 @@
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
       </div>
-     
+      
       <div class="mobile-menu-button">
-        <span class="bar bar-1"></span>
-        <span class="bar bar-2"></span>
-        <span class="bar bar-3"></span>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
-    </nav>
+    </div>
   </header>
 
   <!-- Mobile Menu -->
   <div class="mobile-menu">
-    <div class="close-button">✕</div>
+    <div class="close-button">&times;</div>
     <div class="mobile-nav-links">
       <a href="index.html">Home</a>
       <a href="weather_forecast.html">Crop Advisor</a>
@@ -813,15 +1165,14 @@
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </div>
-   
+    
   </div>
 
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-content">
-      <h1>Smart Farming Solutions for Better Crop Management</h1>
-      <p>Get personalized crop recommendations, disease detection, and fertilizer advice to maximize your harvest yield.
-      </p>
+      <h1>Smart Agriculture Solutions for Indian Farmers</h1>
+      <p>Boost your yield and monitor crop health with AgroCare India. Get weather forecasts, crop advisory, and market price information.</p>
       <div class="hero-buttons">
         <a href="#" class="btn btn-large btn-primary">Get Started</a>
         <a href="#" class="btn btn-large btn-secondary">Learn More</a>
@@ -830,104 +1181,151 @@
   </section>
 
   <!-- Features Section -->
-  <section class="features">
+  <section class="features" id="features">
     <div class="section-title">
-      <h2>Our Smart Agriculture Services</h2>
-      <p>Advanced tools and technologies to help you make informed farming decisions</p>
+      <h2>Our Features</h2>
+      <p>AgroCare India offers comprehensive agricultural solutions for Indian farmers</p>
     </div>
     <div class="features-grid">
       <div class="feature-card">
         <a href="weather_forecast.html" class="feature-link">
-          <div class="feature-img">🌾</div>
+          <div class="feature-img">
+            <span>🌾</span>
+          </div>
           <div class="feature-content">
-            <h3>Crop Recommendation</h3>
-            <p>Get personalized crop suggestions based on your soil type, climate conditions, and location to maximize
-              yield
-              and profit.</p>
+            <h3>Crop Advisor</h3>
+            <p>Get personalized crop recommendations based on your location, soil type, and weather conditions. Optimize your farming decisions with AI-powered insights.</p>
+          </div>
+        </a>
+      </div>
+      <div class="feature-card">
+        <a href="weather_forecast.html" class="feature-link">
+          <div class="feature-img">
+            <span>🌦️</span>
+          </div>
+          <div class="feature-content">
+            <h3>Weather Forecast</h3>
+            <p>Get accurate weather forecasts for your location. View detailed predictions for temperature, rainfall, and humidity to plan your farming activities.</p>
           </div>
         </a>
       </div>
       <div class="feature-card">
         <a href="crop_disease_detection.html" class="feature-link">
-          <div class="feature-img">🔬</div>
+          <div class="feature-img">
+            <span>🔍</span>
+          </div>
           <div class="feature-content">
             <h3>Disease Detection</h3>
-            <p>Upload images of your plants and get instant identification of diseases, pests, and deficiencies with
-              treatment recommendations.</p>
+            <p>Identify crop diseases early using AI-powered image analysis. Get instant diagnosis and treatment recommendations to protect your crops.</p>
           </div>
         </a>
       </div>
       <div class="feature-card">
-        <a href="fertilizer_recommendation.html" class="feature-link">
-          <div class="feature-img">🧪</div>
+        <a href="crop_yeild_prediction.html" class="feature-link">
+          <div class="feature-img">
+            <span>📊</span>
+          </div>
           <div class="feature-content">
-            <h3>Fertilizer Recommendation</h3>
-            <p>Receive custom fertilizer recommendations based on soil nutrient levels and crop requirements for optimal
-              growth.</p>
+            <h3>Crop Yield Prediction</h3>
+            <p>Predict your crop yield using advanced AI models. Plan better and make informed decisions about your harvest and market strategies.</p>
           </div>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- Subscription Plans -->
-  <section class="subscription">
+  <!-- Weather & Crop Recommendation Section -->
+  <section class="weather-crop-section" id="weather-crop">
+    <div class="section-title">
+      <h2>Weather Forecast and Crop Advisory</h2>
+      <p>View current weather and crop recommendations for your region</p>
+    </div>
+    <div class="forecast-grid">
+      <div class="weather-card">
+        <div class="weather-icon">☀️</div>
+        <h3>Today's Weather</h3>
+        <p>New Delhi, India</p>
+        <h2>32°C</h2>
+        <p>Sunny, light breeze</p>
+        <p>Humidity: 65%</p>
+        <p>Rain Probability: 10%</p>
+        <a href="#" class="btn btn-secondary">View 7-Day Forecast</a>
+      </div>
+      <div class="crop-recommendation">
+        <div class="crop-icon">🌾</div>
+        <h3>Seasonal Crop Advisory</h3>
+        <p>Recommended crops for your region</p>
+        <ul>
+          <li>Wheat</li>
+          <li>Rice</li>
+          <li>Mustard</li>
+          <li>Pulses</li>
+        </ul>
+        <a href="#" class="btn btn-secondary">Get Detailed Advice</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subscription Plans with Rupees -->
+  <section class="subscription" id="pricing">
     <div class="subscription-content">
       <div class="section-title">
         <h2>Subscription Plans</h2>
-        <p>Choose the perfect plan for your farming needs</p>
+        <p>Choose the right plan based on your needs</p>
       </div>
       <div class="plans-grid">
         <div class="plan-card">
           <div class="plan-header">
             <h3>Basic</h3>
-            <div class="plan-price">$0<span>/month</span></div>
-            <p>Get started with essential features</p>
+            <div class="plan-price">
+              <span class="currency">₹</span>0<span>/month</span>
+            </div>
           </div>
           <div class="plan-features">
             <ul>
-              <li>Limited crop recommendations</li>
-              <li>Basic disease detection (5/month)</li>
-              <li>Simple fertilizer advice</li>
-              <li>Community forum access</li>
-              <li>Email support</li>
+              <li>Basic Weather Forecast</li>
+              <li>Limited Crop Advisory</li>
+              <li>General Farming Tips</li>
+              <li>Access to Community Forum</li>
             </ul>
-            <a href="#" class="btn btn-primary btn-plan">Start Free</a>
+            <a href="#" class="btn btn-plan btn-primary">Start Free</a>
           </div>
         </div>
         <div class="plan-card">
-          <div class="popular-badge">Most Popular</div>
+          <div class="popular-badge">Popular</div>
           <div class="plan-header">
-            <h3>Pro</h3>
-            <div class="plan-price">$9.99<span>/month</span></div>
-            <p>Advanced features for serious farmers</p>
+            <h3>Farmer</h3>
+            <div class="plan-price">
+              <span class="currency">₹</span>299<span>/month</span>
+            </div>
           </div>
           <div class="plan-features">
             <ul>
-              <li>Unlimited crop recommendations</li>
-              <li>Advanced disease detection (50/month)</li>
-              <li>Detailed fertilizer analysis</li>
-              <li>Seasonal planning tools</li>
-              <li>Priority email & chat support</li>
+              <li>Advanced Weather Forecast</li>
+              <li>Detailed Crop Advisory</li>
+              <li>Disease Identification and Treatment</li>
+              <li>Market Price Alerts</li>
+              <li>Access to Premium Forum</li>
             </ul>
-            <a href="#" class="btn btn-primary btn-plan">Get Pro</a>
+            <a href="#" class="btn btn-plan btn-primary">Buy Now</a>
           </div>
         </div>
         <div class="plan-card">
           <div class="plan-header">
-            <h3>Premium</h3>
-            <div class="plan-price">$24.99<span>/month</span></div>
-            <p>Complete solution for commercial farms</p>
+            <h3>Progressive</h3>
+            <div class="plan-price">
+              <span class="currency">₹</span>599<span>/month</span>
+            </div>
           </div>
           <div class="plan-features">
             <ul>
-              <li>All Pro features included</li>
-              <li>Unlimited disease detection</li>
-              <li>Multiple farm management</li>
-              <li>Advanced analytics dashboard</li>
-              <li>24/7 priority support</li>
+              <li>All Farmer Features</li>
+              <li>Personal Agricultural Advisor</li>
+              <li>Drone-Based Crop Monitoring</li>
+              <li>Advanced Analytics and Reports</li>
+              <li>Government Scheme Guidance</li>
             </ul>
-            <a href="#" class="btn btn-primary btn-plan">Get Premium</a>
+            <a href="#" class="btn btn-plan btn-primary">Buy Now</a>
           </div>
         </div>
       </div>
@@ -935,48 +1333,39 @@
   </section>
 
   <!-- Testimonials -->
-  <section class="testimonials">
+  <section class="testimonials" id="testimonials">
     <div class="section-title">
-      <h2>What Our Farmers Say</h2>
-      <p>Success stories from farmers using our platform</p>
+      <h2>Farmers' Success Stories</h2>
+      <p>See how AgroCare India is helping Indian farmers</p>
     </div>
     <div class="testimonial-grid">
       <div class="testimonial-card">
-        <div class="testimonial-text">
-          "The crop recommendation system helped me increase my yield by 30% last season. The soil analysis was spot on
-          and the fertilizer guidance was exactly what my crops needed."
-        </div>
+        <p class="testimonial-text">Thanks to AgroCare's crop advisory, I saw a 30% increase in my wheat yield. The weather predictions are very accurate!</p>
         <div class="testimonial-author">
-          <div class="author-avatar">JD</div>
-          <div>
-            <strong>John Davis</strong>
-            <p>Wheat Farmer, Kansas</p>
+          <div class="author-avatar">RS</div>
+          <div class="author-info">
+            <strong>Rajesh Singh</strong>
+            <p>Punjab, India</p>
           </div>
         </div>
       </div>
       <div class="testimonial-card">
-        <div class="testimonial-text">
-          "I detected an early outbreak of leaf blight using the disease detection feature. The immediate treatment
-          advice saved my entire tomato crop. Worth every penny!"
-        </div>
+        <p class="testimonial-text">With market price information, I got a fair price for my produce. Now I don't rely on middlemen and sell directly to the market.</p>
         <div class="testimonial-author">
-          <div class="author-avatar">MP</div>
-          <div>
-            <strong>Maria Perez</strong>
-            <p>Vegetable Grower, California</p>
+          <div class="author-avatar">SM</div>
+          <div class="author-info">
+            <strong>Suresh Mahto</strong>
+            <p>Bihar, India</p>
           </div>
         </div>
       </div>
       <div class="testimonial-card">
-        <div class="testimonial-text">
-          "As a new farmer, this platform has been my go-to advisor. The chatbot answers my questions instantly, and the
-          recommendations are always reliable and easy to follow."
-        </div>
+        <p class="testimonial-text">Getting crop suggestions in English is very helpful. With AgroCare's help, I started organic farming, and now my produce is in high demand in local markets.</p>
         <div class="testimonial-author">
-          <div class="author-avatar">AK</div>
-          <div>
-            <strong>Amir Khan</strong>
-            <p>Small-scale Farmer, Illinois</p>
+          <div class="author-avatar">LK</div>
+          <div class="author-info">
+            <strong>Lata Kumari</strong>
+            <p>Maharashtra, India</p>
           </div>
         </div>
       </div>
@@ -986,9 +1375,9 @@
   <!-- Call to Action -->
   <section class="cta">
     <div class="cta-content">
-      <h2>Ready to Transform Your Farming?</h2>
-      <p>Join thousands of farmers already using AgroCare to increase their yields, reduce costs, and farm smarter.</p>
-      <a href="#" class="btn btn-large btn-secondary">Get Started Today</a>
+      <h2>Take Your Farming to the Next Level</h2>
+      <p>Start your journey with AgroCare India today and increase your productivity and profitability</p>
+      <a href="#" class="btn btn-large btn-secondary">Start Free</a>
     </div>
   </section>
 
@@ -996,235 +1385,96 @@
   <footer>
     <div class="footer-content">
       <div class="footer-col">
-        <h4>AgroCare</h4>
-        <p>Smart solutions for modern farming, providing data-driven recommendations for better agricultural decisions.
-        </p>
+        <h4>AgroCare India</h4>
+        <p>Providing digital agricultural solutions for Indian farmers by blending advanced technology with traditional knowledge.</p>
+        <div class="social-icons">
+          <a href="#" class="social-icon">f</a>
+          <a href="#" class="social-icon">t</a>
+          <a href="#" class="social-icon">in</a>
+          <a href="#" class="social-icon">ig</a>
+        </div>
       </div>
       <div class="footer-col">
-        <h4>Services</h4>
+        <h4>Quick Links</h4>
         <ul>
-          <li><a href="#">Crop Recommendation</a></li>
-          <li><a href="#">Disease Detection</a></li>
-          <li><a href="#">Fertilizer Recommendation</a></li>
-          <li><a href="#">Weather Forecasts</a></li>
-          <li><a href="#">Market Insights</a></li>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Weather Forecast</a></li>
+          <li><a href="#">Crop Advisory</a></li>
+          <li><a href="#">Pricing</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Company</h4>
+        <h4>Help</h4>
         <ul>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Our Team</a></li>
-          <li><a href="#">Careers</a></li>
-          <li><a href="#">Partners</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="#">Help Center</a></li>
           <li><a href="#">Contact Us</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Support</h4>
+        <h4>Contact Us</h4>
         <ul>
-          <li><a href="#">Help Center</a></li>
-          <li><a href="#">FAQs</a></li>
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Contact Support</a></li>
+          <li>📞 Toll-Free: 1800-123-4567</li>
+          <li>📧 Email: info@agrocare.in</li>
+          <li>📍 Address: AgroCare India, Sector 15, Gurugram, Haryana</li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 AgroCare. All rights reserved.</p>
+      <p>&copy; 2025 AgroCare India | All Rights Reserved</p>
     </div>
   </footer>
 
   <!-- Chatbot Button -->
-  <div class="chatbot-button">💬</div>
+  <div class="chatbot-button" id="chatbot-toggle">
+    💬
+  </div>
 
   <!-- Chatbot Container -->
   <div id="chatbot-container" class="chatbot-hidden">
     <div class="chatbot-header">
-      <h3>AgroCare Assistant</h3>
-      <span class="chatbot-close">×</span>
-    </div>
-    <div class="chatbot-messages" id="chatbot-messages">
-      <div class="bot-message">
-        <div class="avatar">🌱</div>
-        <div class="message">Hi there! I'm your AgroCare assistant. How can I help you with your farming needs today?</div>
+      <div class="chatbot-title">
+        <span>🤖</span>
+        <span>Agriculture Assistant</span>
       </div>
+      <div class="close-button" id="chatbot-close">✕</div>
     </div>
-    <div class="chatbot-input">
-      <input type="text" id="user-input" placeholder="Type your message...">
-      <button id="send-button">Send</button>
-    </div>
+    <!-- Chatbot content would go here -->
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    // Mobile Menu Toggle
+    document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuButton = document.querySelector('.mobile-menu-button');
       const mobileMenu = document.querySelector('.mobile-menu');
-      const closeButton = document.querySelector('.close-button');
-
-      // Toggle mobile menu with hamburger button
-      mobileMenuButton.addEventListener('click', function () {
-        mobileMenuButton.classList.toggle('active');
+      const closeButton = document.querySelector('.mobile-menu .close-button');
+      
+      mobileMenuButton.addEventListener('click', function() {
         mobileMenu.classList.toggle('active');
-
-        // Prevent scrolling when menu is open
-        if (mobileMenu.classList.contains('active')) {
-          document.body.style.overflow = 'hidden';
-        } else {
-          document.body.style.overflow = '';
-        }
+        mobileMenuButton.classList.toggle('active');
       });
-
-      // Close menu with X button
-      closeButton.addEventListener('click', function () {
-        mobileMenuButton.classList.remove('active');
+      
+      closeButton.addEventListener('click', function() {
         mobileMenu.classList.remove('active');
-        document.body.style.overflow = '';
+        mobileMenuButton.classList.remove('active');
       });
-
-      // Close menu when clicking on links
-      const mobileMenuLinks = document.querySelectorAll('.mobile-nav-links a');
-      mobileMenuLinks.forEach(link => {
-        link.addEventListener('click', function () {
-          mobileMenuButton.classList.remove('active');
-          mobileMenu.classList.remove('active');
-          document.body.style.overflow = '';
-        });
-      });
-
-      // Set active class based on current page
-      const currentPage = window.location.pathname.split('/').pop();
-      const navLinks = document.querySelectorAll('.nav-links a');
-      const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
-
-      function setActiveLink(links) {
-        links.forEach(link => {
-          const linkPage = link.getAttribute('href');
-          if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
-          }
-        });
-      }
-
-      setActiveLink(navLinks);
-      setActiveLink(mobileNavLinks);
-    });
-  </script>
-
-  <!-- Add the new chatbot script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Get chatbot elements
-      const chatbotButton = document.querySelector('.chatbot-button');
+      
+      // Chatbot Toggle
+      const chatbotToggle = document.getElementById('chatbot-toggle');
       const chatbotContainer = document.getElementById('chatbot-container');
-      const chatbotClose = document.querySelector('.chatbot-close');
-      const chatbotMessages = document.getElementById('chatbot-messages');
-      const userInput = document.getElementById('user-input');
-      const sendButton = document.getElementById('send-button');
+      const chatbotClose = document.getElementById('chatbot-close');
       
-      // Predefined responses for common agricultural queries
-      const responses = {
-        "crop recommendation": "Based on your location and soil type, I recommend planting wheat, corn, or soybeans. Would you like specific details about any of these crops?",
-        "disease detection": "To detect plant diseases, please upload a clear image of the affected plant part through our Disease Detection tool. Our AI will analyze it and provide recommendations.",
-        "fertilizer": "For optimal fertilizer recommendations, please provide your soil test results or use our Fertilizer Recommendation tool. Would you like general fertilizer tips?",
-        "weather": "Our weather forecast indicates favorable conditions for planting in the next week. Check the detailed forecast in your dashboard for more information.",
-        "hello": "Hello! I'm your AgroCare assistant. How can I help with your farming needs today?",
-        "hi": "Hi there! How can I assist with your agricultural questions today?",
-        "help": "I can help with crop recommendations, disease detection, fertilizer advice, and weather information. What do you need assistance with?",
-        "pricing": "We offer three plans: Basic (free), Pro ($9.99/month), and Premium ($24.99/month). Each offers different levels of service. Would you like details about a specific plan?",
-        "contact": "You can reach our support team at support@agrocare.com or call us at (555) 123-4567 during business hours.",
-        "thanks": "You're welcome! Feel free to ask if you need any other farming assistance.",
-        "thank you": "You're welcome! Feel free to ask if you need any other farming assistance."
-      };
-      
-      // Basic keyword matching function
-      function findResponse(message) {
-        message = message.toLowerCase();
-        
-        for (const keyword in responses) {
-          if (message.includes(keyword)) {
-            return responses[keyword];
-          }
-        }
-        
-        // Default response if no keywords match
-        return "I'm here to help with your farming questions about crops, diseases, fertilizers, and more. Could you please provide more details about your query?";
-      }
-      
-      // Toggle chatbot visibility
-      chatbotButton.addEventListener('click', function() {
+      chatbotToggle.addEventListener('click', function() {
         chatbotContainer.classList.toggle('chatbot-hidden');
-        if (!chatbotContainer.classList.contains('chatbot-hidden')) {
-          userInput.focus();
-        }
       });
       
-      // Close chatbot
       chatbotClose.addEventListener('click', function() {
         chatbotContainer.classList.add('chatbot-hidden');
       });
-      
-      // Send message on button click
-      sendButton.addEventListener('click', sendMessage);
-      
-      // Send message on Enter key
-      userInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          sendMessage();
-        }
-      });
-      
-      // Send message function
-      function sendMessage() {
-        const message = userInput.value.trim();
-        if (message === '') return;
-        
-        // Add user message to chat
-        addMessage(message, 'user');
-        userInput.value = '';
-        
-        // Show typing indicator
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'bot-message typing';
-        typingDiv.innerHTML = '<div class="avatar">🌱</div><div class="message">Typing...</div>';
-        chatbotMessages.appendChild(typingDiv);
-        
-        // Simulate network delay
-        setTimeout(() => {
-          // Remove typing indicator
-          chatbotMessages.removeChild(typingDiv);
-          
-          // Get appropriate response based on keywords
-          const botResponse = findResponse(message);
-          addMessage(botResponse, 'bot');
-        }, 1000);
-      }
-      
-      // Add message to chat
-      function addMessage(text, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
-        
-        const avatar = document.createElement('div');
-        avatar.className = 'avatar';
-        avatar.textContent = sender === 'user' ? '👤' : '🌱';
-        
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message';
-        messageContent.textContent = text;
-        
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(messageContent);
-        chatbotMessages.appendChild(messageDiv);
-        
-        // Scroll to bottom
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-      }
     });
   </script>
 </body>
-
 </html>
