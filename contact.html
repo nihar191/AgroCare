@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroCare - Contact Us</title>
+    <style>
+        :root {
+            --primary: #2c7a2a;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary: #f8b500;
+            --secondary-dark: #e69b00;
+            --text: #333;
+            --background: #f5f8f5;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding-top: 80px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            background-image: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            top: 0;
+            left: 0;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            z-index: 200;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            color: var(--secondary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .nav-links a.active {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--secondary);
+            border-radius: 3px;
+        }
+        
+        /* Mobile Menu Button */
+        .mobile-menu-button {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            z-index: 200;
+            position: relative;
+        }
+        
+        .mobile-menu-button .bar {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Menu Button Animation */
+        .mobile-menu-button.active .bar-1 {
+            transform: translateY(10.5px) rotate(45deg);
+        }
+        
+        .mobile-menu-button.active .bar-2 {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .mobile-menu-button.active .bar-3 {
+            transform: translateY(-10.5px) rotate(-45deg);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: var(--primary);
+            background-image: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            z-index: 100;
+            padding: 6rem 2rem 2rem;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+            display: flex;
+        }
+        
+        /* Close Button */
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 201;
+        }
+        
+        .close-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover {
+            color: var(--secondary);
+            transform: translateX(10px);
+        }
+        
+        .mobile-nav-links a.active {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-button {
+                display: flex;
+            }
+            
+            .mobile-menu {
+                display: flex;
+            }
+        }
+
+        /* Rest of your existing styles */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .contact-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .contact-info {
+            width: 48%;
+        }
+        
+        .contact-form {
+            width: 48%;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        textarea {
+            height: 150px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-info, .contact-form {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">🌱 AgroCare</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="weather_forecast.html">Crop Advisor</a>
+                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="crop_yeild_prediction.html">Crop Yield</a>
+                <a href="dashboard.html">User Dashboard</a>
+                <a href="about.html">About</a>
+                <a href="contact.html" class="active">Contact</a>
+            </div>
+            
+            <div class="mobile-menu-button">
+                <span class="bar bar-1"></span>
+                <span class="bar bar-2"></span>
+                <span class="bar bar-3"></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-menu">
+        <div class="close-button">✕</div>
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="weather_forecast.html">Crop Advisor</a>
+            <a href="crop_disease_detection.html">Disease Detection</a>
+            <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+            <a href="crop_yeild_prediction.html">Crop Yield</a>
+            <a href="dashboard.html">User Dashboard</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="active">Contact</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="contact-section">
+            <h1>Contact Us</h1>
+            <p>Have questions about our student project? Want to learn more about AgroCare? Reach out to us!</p>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2>Contact Information</h2>
+                    <p><strong>Email:</strong> niharnvanjari191@gmail.com</p>
+                    <p><strong>Phone:</strong> +91 - 9765043200</p>
+                    <p><strong>Address:</strong> Badmosh Nagari</p>
+                    <p><strong>Office Hours:</strong> Monday-Friday, 12:00 PM - 5:00 PM</p>
+                    <br>
+                    <h2>Follow Our Project</h2>
+                    <p><strong>GitHub:</strong> No Free Stuff Available, Sorry.</p>
+                </div>
+                
+                <div class="contact-form">
+                    <h2>Send Us a Message</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Subject:</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message:</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        
+                        <button type="submit">Send Message</button>
+                    </form>
+                    <p id="formStatus" style="margin-top: 1rem; color: green;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 AgroCare | <a href="about.html" style="color: white;">About Us</a></p>
+    </footer>
+    
+    <script>
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const closeButton = document.querySelector('.close-button');
+            
+            // Toggle mobile menu with hamburger button
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenuButton.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+                
+                // Prevent scrolling when menu is open
+                if (mobileMenu.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close menu with X button
+            closeButton.addEventListener('click', function () {
+                mobileMenuButton.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Close menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-nav-links a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    mobileMenuButton.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            // Simple form handling
+            document.getElementById("contactForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+                document.getElementById("formStatus").textContent = "Thanks for your message! We'll get back to you soon.";
+                document.getElementById("contactForm").reset();
+            });
+        });
+    </script>
+</body>
+</html>

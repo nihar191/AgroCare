@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroCare - About Us</title>
+    <style>
+        :root {
+            --primary: #0e6a11;
+            --primary-dark: #1b8220;
+            --primary-light: #C8E6C9;
+            --text: #212121;
+            --accent: #FF9800;
+            --accent-light: #FFE0B2;
+            --divider: #BDBDBD;
+            --background: #F5F5F5;
+            --card: #FFFFFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding-top: 80px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: var(--primary-dark);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            top: 0;
+            left: 0;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            z-index: 200;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .nav-links a.active {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--accent);
+            border-radius: 3px;
+        }
+        
+        /* Mobile Menu Button */
+        .mobile-menu-button {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            z-index: 200;
+            position: relative;
+        }
+        
+        .mobile-menu-button .bar {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Menu Button Animation */
+        .mobile-menu-button.active .bar-1 {
+            transform: translateY(10.5px) rotate(45deg);
+        }
+        
+        .mobile-menu-button.active .bar-2 {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .mobile-menu-button.active .bar-3 {
+            transform: translateY(-10.5px) rotate(-45deg);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: var(--primary-dark);
+            z-index: 100;
+            padding: 6rem 2rem 2rem;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+            display: flex;
+        }
+        
+        /* Close Button */
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 201;
+        }
+        
+        .close-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .mobile-nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover {
+            color: var(--accent);
+            transform: translateX(10px);
+        }
+        
+        .mobile-nav-links a.active {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-button {
+                display: flex;
+            }
+            
+            .mobile-menu {
+                display: flex;
+            }
+        }
+
+        /* Rest of your existing styles */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .about-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .team-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .team-member {
+            width: 48%;
+            background-color: #f1f1f1;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+        
+        .team-member h3 {
+            color: var(--primary);
+        }
+        
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .team-member {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">🌱 AgroCare</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="weather_forecast.html">Crop Advisor</a>
+                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="crop_yeild_prediction.html">Crop Yield</a>
+                <a href="dashboard.html">User Dashboard</a>
+                <a href="about.html" class="active">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            
+            <div class="mobile-menu-button">
+                <span class="bar bar-1"></span>
+                <span class="bar bar-2"></span>
+                <span class="bar bar-3"></span>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-menu">
+        <div class="close-button">✕</div>
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="weather_forecast.html">Crop Advisor</a>
+            <a href="crop_disease_detection.html">Disease Detection</a>
+            <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+            <a href="crop_yeild_prediction.html">Crop Yield</a>
+            <a href="dashboard.html">User Dashboard</a>
+            <a href="about.html" class="active">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="about-section">
+            <h1>About AgroCare</h1>
+            <p>Welcome to AgroCare! We are a team of 4 students passionate about improving agricultural practices through innovation and technology.</p>
+            <p>Our project aims to provide simple, effective solutions for sustainable farming and crop management. We believe that with the right tools and knowledge, farmers can increase productivity while minimizing environmental impact.</p>
+            <p>Started in 2024 as a university project, AgroCare has grown into a platform that connects agricultural science with practical applications for everyday farming challenges.</p>
+            
+            <h2>Our Mission</h2>
+            <p>To empower farmers with accessible technology and knowledge for sustainable agricultural practices.</p>
+            
+            <div class="team-section">
+                <h2>Our Team</h2>
+                
+                <div class="team-member">
+                    <h3>Nihar Vanjari</h3>
+                    <p>Badmosh Coder</p>
+                    <p>Specializes in full-stack development and AI integration for agricultural solutions</p>
+                </div>
+                
+                <div class="team-member">
+                    <h3>Mahesh Ghadage</h3>
+                    <p>Computer Science Major</p>
+                    <p>Helps with basic coding and simple tasks</p>
+                </div>
+                
+                <div class="team-member">
+                    <h3>Shantanu Wadekar</h3>
+                    <p>Computer Science Student</p>
+                    <p>Implicating basic programming concepts</p>
+                </div>
+                
+                <div class="team-member">
+                    <h3>Dnyaneshwar Tagare</h3>
+                    <p>Business Management Major</p>
+                    <p>Handles project planning and community outreach initiatives</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 AgroCare | <a href="contact.html" style="color: white;">Contact Us</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const closeButton = document.querySelector('.close-button');
+            
+            // Toggle mobile menu with hamburger button
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenuButton.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+                
+                // Prevent scrolling when menu is open
+                if (mobileMenu.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close menu with X button
+            closeButton.addEventListener('click', function () {
+                mobileMenuButton.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Close menu when clicking on links
+            const mobileMenuLinks = document.querySelectorAll('.mobile-nav-links a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    mobileMenuButton.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
