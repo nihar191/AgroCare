@@ -636,6 +636,11 @@
                     <h2>Crop Recommendations</h2>
                     <span id="cropRecommendationCount">0</span>
                 </div>
+                <div class="metric-card">
+                    <i class="fas fa-chart-line metric-icon"></i>
+                    <h2>Crop Yield Predictions</h2>
+                    <span id="cropYieldCount">0</span>
+                </div>
             </div>
 
             <!-- Charts Grid -->
@@ -683,6 +688,7 @@
             const weatherCount = parseInt(localStorage.getItem('weatherRecommendationCount')) || 0;
             const fertilizerCount = parseInt(localStorage.getItem('fertilizerRecommendationCount')) || 0;
             const diseaseCount = parseInt(localStorage.getItem('diseaseDetectionCount')) || 0;
+            const cropYieldCount = parseInt(localStorage.getItem('cropYieldCount')) || 0;
 
             // Calculate Crop Recommendations - Only multiply weather by 5
             const cropRecommendationCount = (weatherCount * 5);
@@ -692,28 +698,41 @@
             document.getElementById('fertilizerRecommendationCount').textContent = fertilizerCount * 3;
             document.getElementById('diseaseDetectionCount').textContent = diseaseCount;
             document.getElementById('cropRecommendationCount').textContent = cropRecommendationCount;
+            document.getElementById('cropYieldCount').textContent = cropYieldCount;
 
             // Update timestamp
             const now = new Date();
             document.getElementById('lastUpdated').textContent = now.toLocaleString();
 
             // Update charts
-            updateCharts(weatherCount, fertilizerCount, diseaseCount, cropRecommendationCount);
+            updateCharts(weatherCount, fertilizerCount, diseaseCount, cropRecommendationCount, cropYieldCount);
         }
 
         // Function to update charts
-        function updateCharts(weatherCount, fertilizerCount, diseaseCount, cropRecommendationCount) {
+        function updateCharts(weatherCount, fertilizerCount, diseaseCount, cropRecommendationCount, cropYieldCount) {
             // Weather contributions for pie chart
             const weatherContribution = weatherCount;
             // Fertilizer contributions for pie chart (fertilizer * 3)
             const fertilizerContribution = fertilizerCount * 3;
 
             // Horizontal Bar Chart Data
-            horizontalBarChart.data.datasets[0].data = [weatherCount, fertilizerCount * 3, diseaseCount, cropRecommendationCount];
+            horizontalBarChart.data.datasets[0].data = [
+                weatherCount, 
+                fertilizerCount * 3, 
+                diseaseCount, 
+                cropRecommendationCount,
+                cropYieldCount
+            ];
             horizontalBarChart.update();
 
             // Pie Chart Data
-            pieChart.data.datasets[0].data = [weatherContribution, fertilizerContribution, diseaseCount, cropRecommendationCount];
+            pieChart.data.datasets[0].data = [
+                weatherContribution, 
+                fertilizerContribution, 
+                diseaseCount, 
+                cropRecommendationCount,
+                cropYieldCount
+            ];
             pieChart.update();
         }
 
@@ -721,12 +740,12 @@
         const horizontalBarChart = new Chart(document.getElementById('horizontalBarChart'), {
             type: 'bar',
             data: {
-                labels: ['Weather', 'Fertilizer', 'Diseases', 'Crop Recommendations'],
+                labels: ['Weather', 'Fertilizer', 'Diseases', 'Crop Recommendations', 'Crop Yield'],
                 datasets: [{
                     label: 'Count',
-                    data: [0, 0, 0, 0],
-                    backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0'],
-                    borderColor: ['#2E7D32', '#1565C0', '#FFA000', '#7B1FA2'],
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#FF5722'],
+                    borderColor: ['#2E7D32', '#1565C0', '#FFA000', '#7B1FA2', '#E64A19'],
                     borderWidth: 1
                 }]
             },
@@ -750,12 +769,12 @@
         const pieChart = new Chart(document.getElementById('pieChart'), {
             type: 'pie',
             data: {
-                labels: ['Weather Contributions', 'Fertilizer Contributions', 'Diseases Detected', 'Crop Recommendations'],
+                labels: ['Weather Contributions', 'Fertilizer Contributions', 'Diseases Detected', 'Crop Recommendations', 'Crop Yield Predictions'],
                 datasets: [{
-                    label: 'Crop Recommendations',
-                    data: [0, 0, 0, 0],
-                    backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0'],
-                    borderColor: ['#2E7D32', '#1565C0', '#FFA000', '#7B1FA2'],
+                    label: 'Feature Usage',
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#FF5722'],
+                    borderColor: ['#2E7D32', '#1565C0', '#FFA000', '#7B1FA2', '#E64A19'],
                     borderWidth: 1
                 }]
             },
