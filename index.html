@@ -6,6 +6,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgroCare - Crop Management & Advisory Platform</title>
   <style>
+    /* Variables */
+    :root {
+      --primary: #2c7a2a;
+      --primary-light: #4caf50;
+      --primary-dark: #1b5e20;
+      --secondary: #f8b500;
+      --secondary-dark: #e69b00;
+      --text: #333;
+      --background: #f5f8f5;
+      --card-bg: #ffffff;
+      --primary-color: #2c7a2a;
+      --primary-light: #4CAF50;
+      --primary-dark: #1b5e1a;
+      --secondary-color: #2196F3;
+      --warning-color: #FFC107;
+      --danger-color: #F44336;
+      --background-light: #f5f8f5;
+      --background-dark: #1a2421;
+      --text-light: #333;
+      --text-dark: #f0f0f0;
+      --card-light: white;
+      --card-dark: #2c3e50;
+      --shadow-light: rgba(0, 0, 0, 0.1);
+      --shadow-dark: rgba(0, 0, 0, 0.3);
+    }
+
     /* Reset and Base Styles */
     * {
       margin: 0;
@@ -15,9 +41,17 @@
     }
 
     body {
-      background-color: #f5f7fa;
-      color: #333;
+      background-color: var(--background-light);
+      color: var(--text-light);
       line-height: 1.6;
+      padding-top: 80px;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, var(--background-dark), #1e3229);
+      color: var(--text-dark);
     }
 
     /* Close Button styles */
@@ -52,6 +86,8 @@
       width: 100%;
       z-index: 100;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      top: 0;
+      left: 0;
     }
 
     .navbar {
@@ -89,11 +125,13 @@
     }
 
     .nav-links a:hover {
-      opacity: 0.8;
+      color: #f8b500;
+      transform: translateY(-2px);
     }
 
     .nav-links a.active {
       font-weight: 600;
+      color: #f8b500;
     }
 
     .nav-links a.active::after {
@@ -127,13 +165,19 @@
       background: transparent;
     }
 
+    .btn-login:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
     .btn-signup {
       background-color: #f8b500;
       color: #333;
       border: none;
     }
 
-    .btn:hover {
+    .btn-signup:hover {
+      background-color: #e69b00;
       transform: translateY(-2px);
     }
 
@@ -157,7 +201,7 @@
       transition: all 0.3s ease;
     }
 
-    /* Adjust mobile menu to accommodate the close button */
+    /* Mobile Menu */
     .mobile-menu {
       display: none;
       position: fixed;
@@ -172,7 +216,6 @@
       transform: translateX(100%);
       transition: transform 0.3s ease;
     }
-
 
     .mobile-menu.active {
       transform: translateX(0);
@@ -192,6 +235,12 @@
       font-size: 1.2rem;
       padding: 0.5rem 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-nav-links a:hover {
+      color: #f8b500;
+      transform: translateX(10px);
     }
 
     .mobile-nav-links a.active {
@@ -208,6 +257,40 @@
 
     .mobile-auth-buttons .btn {
       text-align: center;
+      width: 100%;
+    }
+
+    .mobile-auth-buttons .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Responsive Navbar */
+    @media (max-width: 768px) {
+      .nav-links,
+      .auth-buttons {
+        display: none;
+      }
+
+      .mobile-menu-button {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: flex;
+      }
+
+      /* Menu Button Animation */
+      .mobile-menu-button.active span:nth-child(1) {
+        transform: translateY(10px) rotate(45deg);
+      }
+
+      .mobile-menu-button.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .mobile-menu-button.active span:nth-child(3) {
+        transform: translateY(-10px) rotate(-45deg);
+      }
     }
 
     /* Hero Section */
@@ -571,47 +654,124 @@
       /* Ensure underline doesn't reappear on hover */
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
+    /* Chatbot Container */
+    #chatbot-container {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 350px;
+      height: 500px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
 
-      .nav-links,
-      .auth-buttons {
-        display: none;
-      }
+    .chatbot-hidden {
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+    }
 
-      .mobile-menu-button {
-        display: flex;
-      }
+    /* Chatbot Header */
+    .chatbot-header {
+      background-color: #2c7a2a;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-      .mobile-menu {
-        display: flex;
-      }
+    .chatbot-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
 
-      /* Menu Button Animation */
-      .mobile-menu-button.active span:nth-child(1) {
-        transform: translateY(10px) rotate(45deg);
-      }
+    .chatbot-close {
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
 
-      .mobile-menu-button.active span:nth-child(2) {
-        opacity: 0;
-      }
+    /* Chatbot Messages */
+    .chatbot-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-      .mobile-menu-button.active span:nth-child(3) {
-        transform: translateY(-10px) rotate(-45deg);
-      }
+    .bot-message, .user-message {
+      display: flex;
+      gap: 10px;
+      max-width: 80%;
+    }
 
-      .hero h1 {
-        font-size: 2rem;
-      }
+    .user-message {
+      flex-direction: row-reverse;
+      align-self: flex-end;
+    }
 
-      .hero-buttons {
-        flex-direction: column;
-        align-items: center;
-      }
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #eef7ee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
 
-      .hero-buttons .btn {
-        width: 100%;
-      }
+    .user-message .avatar {
+      background-color: #f8b500;
+    }
+
+    .message {
+      padding: 10px 15px;
+      border-radius: 15px;
+      background-color: #eef7ee;
+      font-size: 0.9rem;
+    }
+
+    .user-message .message {
+      background-color: #f8b500;
+      color: #333;
+    }
+
+    /* Chatbot Input */
+    .chatbot-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    .chatbot-input input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .chatbot-input button {
+      background-color: #2c7a2a;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 15px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .chatbot-input button:hover {
+      background-color: #1a3d19;
     }
   </style>
 </head>
@@ -626,13 +786,12 @@
         <a href="weather_forecast.html">Crop Advisor</a>
         <a href="crop_disease_detection.html">Disease Detection</a>
         <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+        <a href="crop_yeild_prediction.html">Crop Yield</a>
+        <a href="dashboard.html">User Dashboard</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
       </div>
-      <div class="auth-buttons">
-        <a href="login.html" class="btn btn-login">Login</a>
-        <a href="signup.html" class="btn btn-signup">Sign Up</a>
-      </div>
+     
       <div class="mobile-menu-button">
         <span class="bar bar-1"></span>
         <span class="bar bar-2"></span>
@@ -641,7 +800,7 @@
     </nav>
   </header>
 
-  <!-- Mobile Menu (Add this right after the header) -->
+  <!-- Mobile Menu -->
   <div class="mobile-menu">
     <div class="close-button">✕</div>
     <div class="mobile-nav-links">
@@ -649,15 +808,13 @@
       <a href="weather_forecast.html">Crop Advisor</a>
       <a href="crop_disease_detection.html">Disease Detection</a>
       <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+      <a href="crop_yeild_prediction.html">Crop Yield</a>
+      <a href="dashboard.html">User Dashboard</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </div>
-    <div class="mobile-auth-buttons">
-      <a href="login.html" class="btn btn-login">Login</a>
-      <a href="signup.html" class="btn btn-signup">Sign Up</a>
-    </div>
+   
   </div>
-
 
   <!-- Hero Section -->
   <section class="hero">
@@ -724,7 +881,7 @@
         <div class="plan-card">
           <div class="plan-header">
             <h3>Basic</h3>
-            <div class="plan-price">Rs.0<span>/month</span></div>
+            <div class="plan-price">$0<span>/month</span></div>
             <p>Get started with essential features</p>
           </div>
           <div class="plan-features">
@@ -742,7 +899,7 @@
           <div class="popular-badge">Most Popular</div>
           <div class="plan-header">
             <h3>Pro</h3>
-            <div class="plan-price">Rs.999<span>/month</span></div>
+            <div class="plan-price">$9.99<span>/month</span></div>
             <p>Advanced features for serious farmers</p>
           </div>
           <div class="plan-features">
@@ -759,7 +916,7 @@
         <div class="plan-card">
           <div class="plan-header">
             <h3>Premium</h3>
-            <div class="plan-price">Rs.1499<span>/month</span></div>
+            <div class="plan-price">$24.99<span>/month</span></div>
             <p>Complete solution for commercial farms</p>
           </div>
           <div class="plan-features">
@@ -881,6 +1038,25 @@
 
   <!-- Chatbot Button -->
   <div class="chatbot-button">💬</div>
+
+  <!-- Chatbot Container -->
+  <div id="chatbot-container" class="chatbot-hidden">
+    <div class="chatbot-header">
+      <h3>AgroCare Assistant</h3>
+      <span class="chatbot-close">×</span>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+      <div class="bot-message">
+        <div class="avatar">🌱</div>
+        <div class="message">Hi there! I'm your AgroCare assistant. How can I help you with your farming needs today?</div>
+      </div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="user-input" placeholder="Type your message...">
+      <button id="send-button">Send</button>
+    </div>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const mobileMenuButton = document.querySelector('.mobile-menu-button');
@@ -916,6 +1092,137 @@
           document.body.style.overflow = '';
         });
       });
+
+      // Set active class based on current page
+      const currentPage = window.location.pathname.split('/').pop();
+      const navLinks = document.querySelectorAll('.nav-links a');
+      const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+
+      function setActiveLink(links) {
+        links.forEach(link => {
+          const linkPage = link.getAttribute('href');
+          if (linkPage === currentPage || (currentPage === '' && linkPage === 'index.html')) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+
+      setActiveLink(navLinks);
+      setActiveLink(mobileNavLinks);
+    });
+  </script>
+
+  <!-- Add the new chatbot script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get chatbot elements
+      const chatbotButton = document.querySelector('.chatbot-button');
+      const chatbotContainer = document.getElementById('chatbot-container');
+      const chatbotClose = document.querySelector('.chatbot-close');
+      const chatbotMessages = document.getElementById('chatbot-messages');
+      const userInput = document.getElementById('user-input');
+      const sendButton = document.getElementById('send-button');
+      
+      // Predefined responses for common agricultural queries
+      const responses = {
+        "crop recommendation": "Based on your location and soil type, I recommend planting wheat, corn, or soybeans. Would you like specific details about any of these crops?",
+        "disease detection": "To detect plant diseases, please upload a clear image of the affected plant part through our Disease Detection tool. Our AI will analyze it and provide recommendations.",
+        "fertilizer": "For optimal fertilizer recommendations, please provide your soil test results or use our Fertilizer Recommendation tool. Would you like general fertilizer tips?",
+        "weather": "Our weather forecast indicates favorable conditions for planting in the next week. Check the detailed forecast in your dashboard for more information.",
+        "hello": "Hello! I'm your AgroCare assistant. How can I help with your farming needs today?",
+        "hi": "Hi there! How can I assist with your agricultural questions today?",
+        "help": "I can help with crop recommendations, disease detection, fertilizer advice, and weather information. What do you need assistance with?",
+        "pricing": "We offer three plans: Basic (free), Pro ($9.99/month), and Premium ($24.99/month). Each offers different levels of service. Would you like details about a specific plan?",
+        "contact": "You can reach our support team at support@agrocare.com or call us at (555) 123-4567 during business hours.",
+        "thanks": "You're welcome! Feel free to ask if you need any other farming assistance.",
+        "thank you": "You're welcome! Feel free to ask if you need any other farming assistance."
+      };
+      
+      // Basic keyword matching function
+      function findResponse(message) {
+        message = message.toLowerCase();
+        
+        for (const keyword in responses) {
+          if (message.includes(keyword)) {
+            return responses[keyword];
+          }
+        }
+        
+        // Default response if no keywords match
+        return "I'm here to help with your farming questions about crops, diseases, fertilizers, and more. Could you please provide more details about your query?";
+      }
+      
+      // Toggle chatbot visibility
+      chatbotButton.addEventListener('click', function() {
+        chatbotContainer.classList.toggle('chatbot-hidden');
+        if (!chatbotContainer.classList.contains('chatbot-hidden')) {
+          userInput.focus();
+        }
+      });
+      
+      // Close chatbot
+      chatbotClose.addEventListener('click', function() {
+        chatbotContainer.classList.add('chatbot-hidden');
+      });
+      
+      // Send message on button click
+      sendButton.addEventListener('click', sendMessage);
+      
+      // Send message on Enter key
+      userInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+      
+      // Send message function
+      function sendMessage() {
+        const message = userInput.value.trim();
+        if (message === '') return;
+        
+        // Add user message to chat
+        addMessage(message, 'user');
+        userInput.value = '';
+        
+        // Show typing indicator
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'bot-message typing';
+        typingDiv.innerHTML = '<div class="avatar">🌱</div><div class="message">Typing...</div>';
+        chatbotMessages.appendChild(typingDiv);
+        
+        // Simulate network delay
+        setTimeout(() => {
+          // Remove typing indicator
+          chatbotMessages.removeChild(typingDiv);
+          
+          // Get appropriate response based on keywords
+          const botResponse = findResponse(message);
+          addMessage(botResponse, 'bot');
+        }, 1000);
+      }
+      
+      // Add message to chat
+      function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar';
+        avatar.textContent = sender === 'user' ? '👤' : '🌱';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message';
+        messageContent.textContent = text;
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(messageContent);
+        chatbotMessages.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+      }
     });
   </script>
 </body>

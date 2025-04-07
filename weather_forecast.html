@@ -44,11 +44,11 @@
             background-color: #2c7a2a;
             padding: 1rem;
             position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             top: 0;
             left: 0;
-            width: 100%;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar {
@@ -86,11 +86,13 @@
         }
 
         .nav-links a:hover {
-            opacity: 0.8;
+            color: #f8b500;
+            transform: translateY(-2px);
         }
 
         .nav-links a.active {
             font-weight: 600;
+            color: #f8b500;
         }
 
         .nav-links a.active::after {
@@ -124,10 +126,20 @@
             background: transparent;
         }
 
+        .btn-login:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
         .btn-signup {
             background-color: #f8b500;
             color: #333;
             border: none;
+        }
+
+        .btn-signup:hover {
+            background-color: #e69b00;
+            transform: translateY(-2px);
         }
 
         .btn:hover {
@@ -188,11 +200,19 @@
             font-size: 1.2rem;
             padding: 0.5rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover {
+            color: #f8b500;
+            transform: translateX(10px);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .mobile-nav-links a.active {
             font-weight: 600;
             color: #f8b500;
+            border-bottom: 1px solid #f8b500;
         }
 
         .mobile-auth-buttons {
@@ -335,13 +355,25 @@
             padding: 15px;
             text-align: center;
             width: 18%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .weather-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .weather-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
         }
 
         .weather-card .day {
@@ -364,9 +396,13 @@
             border-radius: var(--border-radius);
             padding: 20px;
             margin-bottom: 30px;
-            box-shadow: var(--box-shadow);
-            display: none;
-            /* Hide initially */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .section {
@@ -374,7 +410,13 @@
             border-radius: var(--border-radius);
             padding: 25px;
             margin-top: 25px;
-            box-shadow: var(--box-shadow);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .section-title {
@@ -450,9 +492,14 @@
             padding: 25px;
             margin-top: 25px;
             border-left: 5px solid var(--secondary-color);
-            box-shadow: var(--box-shadow);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: none;
-            /* Hide initially */
+        }
+
+        .advanced-recommendation:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
         .loading {
@@ -606,13 +653,12 @@
                 <a href="weather_forecast.html">Crop Advisor</a>
                 <a href="crop_disease_detection.html">Disease Detection</a>
                 <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="crop_yeild_prediction.html">Crop Yield</a>
+                <a href="dashboard.html">User Dashboard</a>
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
             </div>
-            <div class="auth-buttons">
-                <a href="login.html" class="btn btn-login">Login</a>
-                <a href="signup.html" class="btn btn-signup">Sign Up</a>
-            </div>
+          
             <div class="mobile-menu-button">
                 <span class="bar bar-1"></span>
                 <span class="bar bar-2"></span>
@@ -629,6 +675,8 @@
             <a href="weather_forecast.html">Crop Advisor</a>
             <a href="crop_disease_detection.html">Disease Detection</a>
             <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+            <a href="crop_yeild_prediction.html">Crop Yield</a>
+            <a href="dashboard.html">User Dashboard</a>
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
         </div>
@@ -839,6 +887,15 @@
 
         function showValidationErrors(errors) {
             alert(`Please fix the following issues:\n\n${errors.join('\n')}`);
+        }
+
+        // Track the number of recommendations
+        let weatherRecommendationCount = localStorage.getItem('weatherRecommendationCount') || 0;
+
+        // Function to update the count
+        function updateWeatherRecommendationCount() {
+            weatherRecommendationCount++;
+            localStorage.setItem('weatherRecommendationCount', weatherRecommendationCount);
         }
 
         function fetchWeatherData() {
@@ -1124,6 +1181,9 @@
 
                     document.getElementById('geminiRecommendation').innerHTML = recommendationText;
                     document.getElementById('advancedRecommendation').style.display = 'block';
+                    
+                    // Update recommendation count when successfully generating a recommendation
+                    updateWeatherRecommendationCount();
                 } else {
                     throw new Error('Invalid response format from Gemini API');
                 }
@@ -1236,6 +1296,51 @@
             setActiveLink(navLinks);
             setActiveLink(mobileNavLinks);
         });
+    </script>
+    <!-- Remove the navbar loading script since we have static navbar -->
+    <script>
+        // Function to save crop recommendations to localStorage
+        function saveCropRecommendations(recommendations) {
+            localStorage.setItem('cropRecommendations', JSON.stringify(recommendations));
+            localStorage.setItem('numCropRecommendations', recommendations.length);
+        }
+
+        // Modify the fetchWeatherData function to save crop recommendations
+        async function fetchWeatherData() {
+            const city = cityInput.value;
+
+            // Validate city input
+            if (!validateCity(city)) {
+                alert('Please enter a valid location');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${WEATHER_API_KEY}&units=metric`
+                );
+                if (!response.ok) throw new Error('City not found or API error');
+                const data = await response.json();
+
+                // Store current weather data
+                currentWeatherData = data;
+                weatherDataFetched = true;
+
+                // Get crop recommendations (replace with Gemini AI logic)
+                const avgTemp = data.list[0].main.temp;
+                const mainWeather = data.list[0].weather[0].main;
+                const recommendations = getCropRecommendations(avgTemp, mainWeather);
+
+                // Save crop recommendations to localStorage
+                saveCropRecommendations(recommendations);
+
+                // Update UI (existing logic)
+                updateUI(data, recommendations);
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                alert('Error fetching weather data. Please check the city name and try again.');
+            }
+        }
     </script>
 </body>
 

@@ -59,8 +59,10 @@
             padding: 1rem;
             position: fixed;
             width: 100%;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            top: 0;
+            left: 0;
         }
 
         .navbar {
@@ -70,6 +72,7 @@
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
+            padding: 0 1rem;
         }
 
         .logo {
@@ -81,11 +84,17 @@
             font-weight: bold;
             text-decoration: none;
             z-index: 200;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         .nav-links {
             display: flex;
             gap: 1.5rem;
+            align-items: center;
         }
 
         .nav-links a {
@@ -98,11 +107,13 @@
         }
 
         .nav-links a:hover {
-            opacity: 0.8;
+            color: #f8b500;
+            transform: translateY(-2px);
         }
 
         .nav-links a.active {
             font-weight: 600;
+            color: #f8b500;
         }
 
         .nav-links a.active::after {
@@ -119,6 +130,7 @@
         .auth-buttons {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
 
         .btn {
@@ -138,17 +150,20 @@
 
         .btn-login:hover {
             background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn-signup {
-            background-color: var(--secondary);
-            color: var(--text);
+            background-color: #f8b500;
+            color: #333;
             border: none;
         }
 
         .btn-signup:hover {
-            background-color: var(--secondary-dark);
+            background-color: #e69b00;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         /* Mobile Menu Button */
@@ -160,15 +175,30 @@
             height: 24px;
             cursor: pointer;
             z-index: 200;
+            position: relative;
         }
 
-        .mobile-menu-button span {
+        .mobile-menu-button .bar {
             display: block;
             width: 100%;
             height: 3px;
             background-color: white;
             border-radius: 3px;
             transition: all 0.3s ease;
+        }
+
+        /* Menu Button Animation */
+        .mobile-menu-button.active .bar-1 {
+            transform: translateY(10.5px) rotate(45deg);
+        }
+
+        .mobile-menu-button.active .bar-2 {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .mobile-menu-button.active .bar-3 {
+            transform: translateY(-10.5px) rotate(-45deg);
         }
 
         /* Mobile Menu */
@@ -180,7 +210,7 @@
             width: 100%;
             height: 100vh;
             background-color: #2c7a2a;
-            z-index: 100;
+            z-index: 1000;
             padding: 6rem 2rem 2rem;
             flex-direction: column;
             transform: translateX(100%);
@@ -205,6 +235,12 @@
             font-size: 1.2rem;
             padding: 0.5rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav-links a:hover {
+            color: #f8b500;
+            transform: translateX(10px);
         }
 
         .mobile-nav-links a.active {
@@ -221,11 +257,15 @@
 
         .mobile-auth-buttons .btn {
             text-align: center;
+            width: 100%;
+        }
+
+        .mobile-auth-buttons .btn:hover {
+            transform: translateY(-2px);
         }
 
         /* Responsive Navbar */
         @media (max-width: 768px) {
-
             .nav-links,
             .auth-buttons {
                 display: none;
@@ -237,19 +277,6 @@
 
             .mobile-menu {
                 display: flex;
-            }
-
-            /* Menu Button Animation */
-            .mobile-menu-button.active span:nth-child(1) {
-                transform: translateY(10px) rotate(45deg);
-            }
-
-            .mobile-menu-button.active span:nth-child(2) {
-                opacity: 0;
-            }
-
-            .mobile-menu-button.active span:nth-child(3) {
-                transform: translateY(-10px) rotate(-45deg);
             }
         }
 
@@ -586,15 +613,14 @@
             <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="weather_forecast.html">Crop Advisor</a>
-                <a href="crop_disease_detection.html">Disease Detection</a>
+                <a href="crop_disease_detection.html" class="active">Disease Detection</a>
                 <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+                <a href="crop_yeild_prediction.html">Crop Yield</a>
+                <a href="dashboard.html">User Dashboard</a>
                 <a href="about.html">About</a>
                 <a href="contact.html">Contact</a>
             </div>
-            <div class="auth-buttons">
-                <a href="login.html" class="btn btn-login">Login</a>
-                <a href="signup.html" class="btn btn-signup">Sign Up</a>
-            </div>
+            
             <div class="mobile-menu-button">
                 <span class="bar bar-1"></span>
                 <span class="bar bar-2"></span>
@@ -608,15 +634,14 @@
         <div class="mobile-nav-links">
             <a href="index.html">Home</a>
             <a href="weather_forecast.html">Crop Advisor</a>
-                <a href="crop_disease_detection.html">Disease Detection</a>
-                <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
-                <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
+            <a href="crop_disease_detection.html" class="active">Disease Detection</a>
+            <a href="fertilizer_recommendation.html">Fertilizer Recommendation</a>
+            <a href="crop_yeild_prediction.html">Crop Yield</a>
+            <a href="dashboard.html">User Dashboard</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
         </div>
-        <div class="mobile-auth-buttons">
-            <a href="login.html" class="btn btn-login">Login</a>
-            <a href="signup.html" class="btn btn-signup">Sign Up</a>
-        </div>
+        
     </div>
 
     <main>
@@ -715,6 +740,14 @@
         const GEMINI_API_KEY = "AIzaSyCLBeMVgOrN7lR8weOm2P5-Bit4F3HuOEo";
         const PLANT_ID_API_URL = "https://api.plant.id/v2/identify";
         const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        // Track the number of image uploads
+        let diseaseDetectionCount = parseInt(localStorage.getItem('diseaseDetectionCount')) || 0;
+
+        // Function to update the count
+        function updateDiseaseDetectionCount() {
+            diseaseDetectionCount++;
+            localStorage.setItem('diseaseDetectionCount', diseaseDetectionCount);
+        }
 
         // Event listeners for drag and drop
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -765,6 +798,9 @@
             if (file && file.type.startsWith('image/')) {
                 // Reset UI
                 resetUI();
+
+                // Update detection count when a valid image is uploaded
+                updateDiseaseDetectionCount();
 
                 // Show preview
                 const reader = new FileReader();
